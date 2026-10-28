@@ -1,9 +1,73 @@
 import { BriefArgs } from "@/types";
 import { BUILD_CONTENT_TOOL, SCHEMAS } from "@/constants/prompts";
 
+// Legacy/Deprecated model migration map
+const MODEL_MIGRATIONS: Record<string, string> = {
+  "gemini-2.5-pro": "gemini-3.1-pro-preview",
+  "models/gemini-2.5-pro": "gemini-3.1-pro-preview"
+};
+
+export function resolveModelName(model: string): string {
+  if (!model) return "gemini-2.5-flash";
+  const clean = model.replace(/^models\//, "").trim();
+  return MODEL_MIGRATIONS[clean] || MODEL_MIGRATIONS[model] || clean;
+}
+
+export interface GeminiModelInfo {
+  name: string;
+  displayName: string;
+  description?: string;
+  isRecommended?: boolean;
+}
+
+/**
+ * Dynamically queries Google Generative Language API for models available to this API key.
+ * Endpoint: https://generativelanguage.googleapis.com/v1beta/models?key=...
+ */
+export async function fetchAvailableModels(apiKey: string): Promise<GeminiModelInfo[]> {
+  const cleanKey = apiKey.trim();
+  if (!cleanKey) return [];
+
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(cleanKey)}`
+    );
+
+    if (!res.ok) {
+      console.warn(`Models list endpoint returned HTTP ${res.status}`);
+      return [];
+    }
+
+    const data = await res.json();
+    const rawModels: any[] = data.models || [];
+
+    const available: GeminiModelInfo[] = rawModels
+      .filter((m: any) => m.supportedGenerationMethods?.includes("generateContent"))
+      .map((m: any) => {
+        const id = m.name.replace(/^models\//, "");
+        return {
+          name: id,
+          displayName: m.displayName || id,
+          description: m.description,
+          isRecommended: /gemini-3\.1-pro|gemini-2\.5-flash|gemini-3-flash/i.test(id)
+        };
+      })
+      // Filter out legacy models that error for new users
+      .filter((m) => m.name !== "gemini-2.5-pro");
+
+    return available;
+  } catch (err) {
+    console.error("Failed to query Gemini models list:", err);
+    return [];
+  }
+}
+
+/**
+ * Structured JSON generator supporting both Google's Interactions API and GenerateContent API.
+ */
 export async function gemJSON(
   apiKey: string,
-  model: string,
+  rawModel: string,
   systemInstruction: string,
   userPrompt: string,
   schema: any
@@ -13,6 +77,47 @@ export async function gemJSON(
     throw new Error("Gemini API key is missing. Add your key in Settings.");
   }
 
+  const model = resolveModelName(rawModel);
+
+  // 1. First attempt: Interactions API (Google's latest recommended API)
+  // Ref: https://ai.google.dev/gemini-api/docs/get-started
+  try {
+    const interactionEndpoint = "https://generativelanguage.googleapis.com/v1beta/interactions";
+    const interactionPayload = {
+      model: model,
+      input: `${systemInstruction}\n\nTask Input:\n${userPrompt}`,
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: schema
+      }
+    };
+
+    const iRes = await fetch(interactionEndpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-goog-api-key": cleanKey
+      },
+      body: JSON.stringify(interactionPayload)
+    });
+
+    if (iRes.ok) {
+      const iData = await iRes.json();
+      const rawText =
+        iData.output_text ||
+        iData.steps?.[iData.steps.length - 1]?.content?.[0]?.text;
+
+      if (rawText) {
+        return JSON.parse(rawText);
+      }
+    }
+  } catch (iErr) {
+    // If Interactions API fails or is not yet enabled for this model, fall through to generateContent
+    console.debug("Interactions API fallback to generateContent:", iErr);
+  }
+
+  // 2. GenerateContent API with Structured JSON Schema
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(
     model
   )}:generateContent?key=${encodeURIComponent(cleanKey)}`;
@@ -42,6 +147,13 @@ export async function gemJSON(
   if (!res.ok) {
     const errData = await res.json().catch(() => ({}));
     const msg = errData?.error?.message || `Gemini API returned status ${res.status}`;
+
+    // Auto-migrate if Google returns the legacy model deprecation warning
+    if (/no longer available to new users|gemini-2\.5-pro/i.test(msg)) {
+      console.warn("Auto-migrating legacy gemini-2.5-pro to gemini-3.1-pro-preview...");
+      return gemJSON(apiKey, "gemini-3.1-pro-preview", systemInstruction, userPrompt, schema);
+    }
+
     throw new Error(msg);
   }
 
@@ -162,20 +274,27 @@ export async function argsFromTranscript(
 
 export async function testGeminiConnection(
   apiKey: string,
-  model: string
-): Promise<{ success: boolean; latencySec: number; sampleTitle?: string; error?: string }> {
+  rawModel: string
+): Promise<{
+  success: boolean;
+  latencySec: number;
+  resolvedModel: string;
+  sampleTitle?: string;
+  error?: string;
+}> {
   const t0 = Date.now();
+  const model = resolveModelName(rawModel);
   try {
     const res = await gemJSON(
       apiKey,
       model,
-      "Reply as JSON.",
+      "Reply strictly as valid JSON.",
       "One hook line about authentic Indian chai.",
       SCHEMAS.news
     );
     const latencySec = (Date.now() - t0) / 1000;
-    return { success: true, latencySec, sampleTitle: res.title };
+    return { success: true, latencySec, resolvedModel: model, sampleTitle: res.title };
   } catch (e: any) {
-    return { success: false, latencySec: 0, error: e.message };
+    return { success: false, latencySec: 0, resolvedModel: model, error: e.message };
   }
 }

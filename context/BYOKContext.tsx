@@ -55,6 +55,10 @@ export function BYOKProvider({ children }: { children: React.ReactNode }) {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
+        // Automatically migrate legacy models
+        if (parsed.textModel === "gemini-2.5-pro" || parsed.textModel === "models/gemini-2.5-pro") {
+          parsed.textModel = "gemini-3.1-pro-preview";
+        }
         setConfig({
           ...DEFAULT_CONFIG,
           ...parsed,

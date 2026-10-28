@@ -1,25 +1,94 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useBYOK } from "@/context/BYOKContext";
-import { testGeminiConnection } from "@/lib/geminiEngine";
-import { X, Key, Sparkles, CheckCircle2, AlertCircle, Radio } from "lucide-react";
+import {
+  testGeminiConnection,
+  fetchAvailableModels,
+  resolveModelName,
+  GeminiModelInfo
+} from "@/lib/geminiEngine";
+import { X, Key, Sparkles, CheckCircle2, AlertCircle, Radio, RefreshCw } from "lucide-react";
 
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+const CURATED_DEFAULT_MODELS: GeminiModelInfo[] = [
+  {
+    name: "gemini-3.1-pro-preview",
+    displayName: "Gemini 3.1 Pro Preview (Latest Reasoning - Recommended)",
+    isRecommended: true
+  },
+  {
+    name: "gemini-2.5-flash",
+    displayName: "Gemini 2.5 Flash (Ultra-fast, ~1s)",
+    isRecommended: true
+  },
+  {
+    name: "gemini-3-flash-preview",
+    displayName: "Gemini 3 Flash Preview (Agentic)",
+    isRecommended: false
+  }
+];
+
 export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const { config, updateConfig } = useBYOK();
-  const [formData, setFormData] = useState({ ...config });
+  const [formData, setFormData] = useState({
+    ...config,
+    textModel: resolveModelName(config.textModel)
+  });
   const [testingGemini, setTestingGemini] = useState(false);
   const [testResult, setTestResult] = useState<{ success?: boolean; msg?: string } | null>(null);
+  const [availableModels, setAvailableModels] = useState<GeminiModelInfo[]>(CURATED_DEFAULT_MODELS);
+  const [fetchingModels, setFetchingModels] = useState(false);
+
+  useEffect(() => {
+    setFormData({
+      ...config,
+      textModel: resolveModelName(config.textModel)
+    });
+  }, [config]);
+
+  // Auto-fetch available models if a key already exists
+  useEffect(() => {
+    if (isOpen && formData.geminiApiKey.trim()) {
+      handleFetchLiveModels(formData.geminiApiKey);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
+  const handleFetchLiveModels = async (keyToUse?: string) => {
+    const key = (keyToUse || formData.geminiApiKey).trim();
+    if (!key) return;
+    setFetchingModels(true);
+    try {
+      const models = await fetchAvailableModels(key);
+      if (models.length > 0) {
+        setAvailableModels(models);
+        // If current model isn't in fetched list, keep or select recommended
+        if (!models.some((m) => m.name === formData.textModel)) {
+          const rec =
+            models.find((m) => m.name === "gemini-3.1-pro-preview") ||
+            models.find((m) => m.name === "gemini-2.5-flash") ||
+            models[0];
+          if (rec) {
+            setFormData((prev) => ({ ...prev, textModel: rec.name }));
+          }
+        }
+      }
+    } finally {
+      setFetchingModels(false);
+    }
+  };
+
   const handleSave = () => {
-    updateConfig(formData);
+    updateConfig({
+      ...formData,
+      textModel: resolveModelName(formData.textModel)
+    });
     onClose();
   };
 
@@ -30,15 +99,23 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     }
     setTestingGemini(true);
     setTestResult(null);
-    const res = await testGeminiConnection(formData.geminiApiKey, formData.textModel);
+
+    const modelToTest = resolveModelName(formData.textModel);
+    const res = await testGeminiConnection(formData.geminiApiKey, modelToTest);
     setTestingGemini(false);
+
     if (res.success) {
       setTestResult({
         success: true,
-        msg: `Connection successful in ${res.latencySec.toFixed(2)}s! Sample: "${res.sampleTitle}"`
+        msg: `Connection verified using ${res.resolvedModel} in ${res.latencySec.toFixed(2)}s!`
       });
+      // Also fetch live model list to populate dropdown
+      handleFetchLiveModels(formData.geminiApiKey);
     } else {
-      setTestResult({ success: false, msg: res.error || "Connection test failed." });
+      setTestResult({
+        success: false,
+        msg: res.error || "Connection test failed."
+      });
     }
   };
 
@@ -149,7 +226,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             <div className="flex items-center justify-between mb-2">
               <label className="text-xs font-semibold text-slate-900 flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                Google Gemini Engine
+                Google Gemini Engine (Interactions API)
               </label>
               <a
                 href="https://aistudio.google.com/app/apikey"
@@ -198,14 +275,29 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] text-slate-500 mb-1">Text Generation Model</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-[11px] text-slate-500">Text Generation Model</label>
+                    <button
+                      type="button"
+                      onClick={() => handleFetchLiveModels()}
+                      disabled={fetchingModels || !formData.geminiApiKey.trim()}
+                      className="text-[10px] text-amber-600 hover:text-amber-700 flex items-center gap-1 disabled:opacity-40"
+                      title="Fetch live model list from Google API"
+                    >
+                      <RefreshCw className={`w-2.5 h-2.5 ${fetchingModels ? "animate-spin" : ""}`} />
+                      {fetchingModels ? "Fetching..." : "Fetch Models"}
+                    </button>
+                  </div>
                   <select
                     value={formData.textModel}
                     onChange={(e) => setFormData({ ...formData, textModel: e.target.value })}
                     className="w-full px-3 py-1.5 border border-slate-200 rounded-lg text-slate-800 bg-white text-xs focus:outline-none"
                   >
-                    <option value="gemini-2.5-flash">Gemini 2.5 Flash (Fastest)</option>
-                    <option value="gemini-2.5-pro">Gemini 2.5 Pro (Deep Reasoning)</option>
+                    {availableModels.map((m) => (
+                      <option key={m.name} value={m.name}>
+                        {m.displayName}
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>
