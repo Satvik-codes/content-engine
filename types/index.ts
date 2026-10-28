@@ -112,7 +112,7 @@ export interface StoryAsset {
 
 // 6. Ad Posters
 export interface PosterItem {
-  kind: "quote" | "stat" | "offer";
+  kind: "quote" | "stat" | "offer" | string;
   headline: string;
   sub: string;
   image_prompt: string;

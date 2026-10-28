@@ -1,69 +1,183 @@
-import Image from "next/image";
+"use client";
+
+import React, { useState, useCallback } from "react";
+import { Header } from "@/components/Header";
+import { InterviewRail } from "@/components/InterviewRail";
+import { StudioGrid } from "@/components/StudioGrid";
+import { SettingsModal } from "@/components/SettingsModal";
+import { SocialConnectModal } from "@/components/SocialConnectModal";
+import { useBYOK } from "@/context/BYOKContext";
+import { useVapiCall } from "@/hooks/useVapiCall";
+import { BriefArgs, GeneratedWeek, ChannelStatus } from "@/types";
+import { DEMO_DATA, JOB_PROMPTS, SCHEMAS, TONE_PROMPTS } from "@/constants/prompts";
+import { gemJSON, gemImage, argsFromTranscript } from "@/lib/geminiEngine";
 
 export default function Home() {
+  const { config, hasGeminiKey } = useBYOK();
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isSocialsOpen, setIsSocialsOpen] = useState(false);
+  const [generatedContent, setGeneratedContent] = useState<GeneratedWeek>({});
+  const [channelStatus, setChannelStatus] = useState<Record<string, ChannelStatus>>({});
+  const [isBuilding, setIsBuilding] = useState(false);
+
+  // Parallel generation orchestrator
+  const buildWeekContent = useCallback(
+    async (brief: BriefArgs, source: string) => {
+      setIsBuilding(true);
+
+      // In DEMO mode or if no Gemini key is provided, load the realistic pre-computed demo set
+      if (!hasGeminiKey) {
+        setTimeout(() => {
+          setGeneratedContent(DEMO_DATA.out);
+          setIsBuilding(false);
+        }, 1200);
+        return;
+      }
+
+      const channels = ["li", "x", "car", "short", "story", "ads", "news", "cal"] as const;
+      const toneInstruction = TONE_PROMPTS[config.preferredTone] || TONE_PROMPTS.founder;
+
+      // Reset content
+      setGeneratedContent({});
+
+      await Promise.all(
+        channels.map(async (ch) => {
+          setChannelStatus((prev) => ({
+            ...prev,
+            [ch]: { writing: true, generatingImages: false, done: false }
+          }));
+
+          try {
+            const systemPrompt = `You are the ${ch} writer in a content team for an Indian creator. Write ONLY from the interview and brief: keep their story, their numbers and their exact quotes; never invent facts, names, stats or results they did not say. India context. No emoji. No em dashes. ${toneInstruction}\n\nYour job: ${JOB_PROMPTS[ch]}`;
+
+            const userPrompt = `Brief (JSON):\n${JSON.stringify(
+              brief,
+              null,
+              2
+            )}\n\nCreator Name: ${config.creatorName}`;
+
+            const result = await gemJSON(
+              config.geminiApiKey,
+              config.textModel,
+              systemPrompt,
+              userPrompt,
+              SCHEMAS[ch]
+            );
+
+            setGeneratedContent((prev) => ({ ...prev, [ch]: result }));
+            setChannelStatus((prev) => ({
+              ...prev,
+              [ch]: { writing: false, generatingImages: true, done: true }
+            }));
+
+            // Optional background image generation
+            if (ch === "li" && result.image_prompt) {
+              gemImage(config.geminiApiKey, config.imageModel, result.image_prompt, "16:9")
+                .then((url) => {
+                  setGeneratedContent((prev) => ({
+                    ...prev,
+                    li: { ...prev.li!, imageUrl: url }
+                  }));
+                })
+                .catch(console.error);
+            }
+          } catch (e: any) {
+            console.error(`Error generating ${ch}:`, e);
+            setChannelStatus((prev) => ({
+              ...prev,
+              [ch]: { writing: false, generatingImages: false, done: false, error: e.message }
+            }));
+          }
+        })
+      );
+
+      setIsBuilding(false);
+    },
+    [config, hasGeminiKey]
+  );
+
+  const {
+    mode,
+    setMode,
+    inCall,
+    statusText,
+    volumeLevel,
+    transcript,
+    brief,
+    speaker,
+    startLive,
+    playDemo,
+    stopCall,
+    reset
+  } = useVapiCall(config.vapiPublicKey, buildWeekContent);
+
+  const handleStartLive = () => {
+    if (!config.vapiPublicKey.trim()) {
+      setIsSettingsOpen(true);
+      return;
+    }
+    startLive(config.creatorName, config.voiceId, config.vapiAssistantId);
+  };
+
+  const handleBuildFromTyped = async (typedText: string) => {
+    if (!hasGeminiKey) {
+      // In demo/free mode
+      setGeneratedContent(DEMO_DATA.out);
+      return;
+    }
+
+    try {
+      setIsBuilding(true);
+      const extractedBrief = await argsFromTranscript(
+        config.geminiApiKey,
+        config.textModel,
+        typedText
+      );
+      await buildWeekContent(extractedBrief, "Typed input");
+    } catch (e: any) {
+      alert("Failed to extract brief from input: " + e.message);
+      setIsBuilding(false);
+    }
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900">
+      {/* Top Header */}
+      <Header
+        mode={mode}
+        setMode={setMode}
+        statusText={statusText}
+        inCall={inCall}
+        onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenSocials={() => setIsSocialsOpen(true)}
+      />
+
+      {/* Main Studio Viewport */}
+      <main className="flex-1 max-w-[1760px] w-full mx-auto p-4 md:p-6 flex flex-col lg:flex-row items-start gap-6">
+        {/* Left Rail: The Interviewer */}
+        <InterviewRail
+          mode={mode}
+          inCall={inCall}
+          statusText={statusText}
+          volumeLevel={volumeLevel}
+          speaker={speaker}
+          transcript={transcript}
+          brief={brief}
+          onStartLive={handleStartLive}
+          onPlayDemo={playDemo}
+          onStopCall={stopCall}
+          onReset={reset}
+          onBuildFromTyped={handleBuildFromTyped}
+          isBuilding={isBuilding}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+
+        {/* Right Studio Grid: 6 Platform Previews */}
+        <StudioGrid content={generatedContent} status={channelStatus} />
       </main>
+
+      {/* Modals */}
+      <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+      <SocialConnectModal isOpen={isSocialsOpen} onClose={() => setIsSocialsOpen(false)} />
     </div>
   );
 }
