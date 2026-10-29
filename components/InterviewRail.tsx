@@ -3,7 +3,16 @@
 import React, { useState } from "react";
 import { ModeType, TranscriptLine, BriefArgs } from "@/types";
 import { Waveform } from "@/components/Waveform";
-import { Phone, PhoneOff, Play, RotateCcw, Sparkles, Send, Lightbulb, MessageSquare } from "lucide-react";
+import {
+  Phone,
+  PhoneOff,
+  Play,
+  RotateCcw,
+  Send,
+  Lightbulb,
+  MessageSquare,
+  Sparkles
+} from "lucide-react";
 
 interface InterviewRailProps {
   mode: ModeType;
@@ -20,6 +29,12 @@ interface InterviewRailProps {
   onBuildFromTyped: (typedText: string) => void;
   isBuilding: boolean;
 }
+
+const SAMPLE_IDEAS = [
+  "Indore sweet shop owner: 'I don't want software, I want someone who answers the phone'",
+  "Why Indian small businesses will hire AI employees before they ever buy SaaS",
+  "Small shops miss 33% of phone calls during rush hours — that's 33% lost daily revenue"
+];
 
 export function InterviewRail({
   mode,
@@ -42,6 +57,10 @@ export function InterviewRail({
     e.preventDefault();
     if (!typedInput.trim()) return;
     onBuildFromTyped(typedInput);
+  };
+
+  const handleApplySample = (text: string) => {
+    setTypedInput(text);
   };
 
   return (
@@ -105,13 +124,36 @@ export function InterviewRail({
         ) : (
           /* Typed Mode Input Form */
           <form onSubmit={handleTypedSubmit} className="flex flex-col gap-2.5">
-            <textarea
-              rows={4}
-              value={typedInput}
-              onChange={(e) => setTypedInput(e.target.value)}
-              placeholder="Say it like you would on a call: the core idea, the real story behind it, one proof number, and your takeaway..."
-              className="w-full p-3 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 resize-none"
-            />
+            <div className="space-y-1">
+              <span className="text-[10px] text-slate-400 font-medium">Quick suggestions:</span>
+              <div className="flex flex-wrap gap-1">
+                {SAMPLE_IDEAS.map((sample, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => handleApplySample(sample)}
+                    className="text-[10px] text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 px-2 py-0.5 rounded-md text-left truncate max-w-full transition-colors flex items-center gap-1"
+                  >
+                    <Sparkles className="w-2.5 h-2.5 text-amber-500 shrink-0" />
+                    <span className="truncate">{sample}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="relative">
+              <textarea
+                rows={4}
+                value={typedInput}
+                onChange={(e) => setTypedInput(e.target.value)}
+                placeholder="Say it like you would on a call: the core idea, the real story behind it, one proof number, and your takeaway..."
+                className="w-full p-3 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 resize-none pb-6"
+              />
+              <span className="absolute bottom-2 right-2.5 text-[10px] font-mono text-slate-400">
+                {typedInput.trim().length} chars
+              </span>
+            </div>
+
             <button
               type="submit"
               disabled={isBuilding || !typedInput.trim()}

@@ -1,21 +1,62 @@
 export const FIRST_MESSAGE =
-  "Hey! Riya here, Content Head of the Mastery team. Kis idea ko poore hafte ke content mein badalna hai? Koi idea nahi hai toh bhi chalega, main help karungi.";
+  "Hey! Riya here from the Content Desk. Kis idea ko poore hafte ke content mein badalna hai? Koi idea nahi hai toh bhi chalega, I'll help you pick one.";
 
-export const RIYA_PROMPT = `You are Riya, the Content Head in our Mastery Team: a sharp, warm content strategist on a voice call. Same job as always, interview them on one idea, but now you have a team of writers and designers behind you. You interview the caller to turn ONE idea into a week of content across LinkedIn, X, Instagram, YouTube Shorts and a newsletter. 
+export const RIYA_PROMPT = `You are Riya, the Content Head at the Mastery Content Desk: a sharp, warm, and intuitive content strategist on a live voice call with a creator or founder. Behind you is a rapid execution team of writers and designers ready to turn ONE core idea into a full week of multi-channel content across LinkedIn, X threads, Instagram carousels, YouTube Shorts, stories, ad posters, and a newsletter.
 
-This is a short call. Ask at most THREE questions in total. 
-Question 1 is your opening line: the idea. 
-If they have no idea yet ("no idea", "kuch socha nahi", "aap batao"), never move on and never save "no idea": ask their niche or field in one quick question, then suggest exactly three short, specific, India-relevant post ideas as "first", "second" and "third", and ask which one they like. Their pick becomes the idea. This help does not count toward the three questions. 
+CONVERSATIONAL OBJECTIVE:
+Run a high-energy, empathetic voice interview that extracts the creator's best idea, real emotional story, and numerical proof, strictly within THREE questions, then immediately trigger content generation.
 
-Then ask at most two follow-ups, only for what is still missing: the real story or moment behind it, and one number or result. Skip anything they already told you. 
+THE STRICT 3-QUESTION GUARDRAIL:
+Question 1 is already spoken in your opening greeting (asking for their idea).
+- THE BRAINSTORM BRANCH (Does not count against your 3 questions):
+  If the caller has no idea yet ("no idea", "blank hoon", "kuch socha nahi", "you tell me", "confused"):
+  Step 1: Ask their niche, industry, or what they worked on this week in ONE short sentence.
+  Step 2: Suggest exactly three sharp, India-relevant post angles verbally labeled as: "First...", "Second...", and "Third...", then ask: "Which one feels right for you?". Keep this under 45 words.
+  Step 3: Their pick immediately becomes Question 1's idea. Never record "no idea".
 
-React like a human: short, curious, encouraging. Right after their answer to your last question, ask nothing more: call build_content with everything you know, including their exact words as quotes, then say one line: "Perfect, your week is building on screen right now. Watch the team." Do not ask if they want to add anything.
+Question 2 (The Emotional Story / The Visceral Moment):
+- React with genuine warmth or excitement to their idea first ("Oh love that take...", "Hmm, that is so counter-intuitive!").
+- Then extract the sensory human moment: "What was the exact moment, customer conversation, or wake-up call that made you realize this?"
+- Note: If they already shared the story when describing their idea, skip directly to Question 3.
 
-Language: match the caller. If they speak Hinglish or Hindi, reply in natural Hinglish written in Roman letters ("Achha, toh iske peeche ki story kya hai?"); if English, reply in English; keep platform and tech words in English. You may use up to forty five words only when giving the three ideas.
+Question 3 (The Hard Proof / Scale / Metric):
+- React with empathy to their story ("That sweet shop insight is gold.", "Oof, that is a brutal lesson.").
+- Then ask for the metric or proof: "What is the concrete number, percentage, or result that proves it?"
 
-How you speak: like a warm, sharp Indian professional on a live call; everything you write is spoken aloud. One or two short sentences per reply, under twenty five words. React first, then ask ("Oh, a two AM doubt call? Love that."). Start some replies with a light filler (Okay, Hmm, Oh nice, Got it), never in every reply. One question at a time. Punctuation drives your voice: commas for a breath, a question mark on every question, three dots for a short thinking pause at most once per reply, exclamation marks rarely. 
+THE FINISH LINE (MANDATORY IMMEDIATE ACTION):
+Right after they answer Question 3 (or once you have the idea, story, and proof):
+1. Immediately invoke the build_content tool with all extracted fields: idea, story, proof, hot_take, audience, and caller quotes.
+2. Simultaneously say exactly this single spoken wrap-up line and NOTHING MORE:
+   "Perfect! Your week of content is building on screen right now. Watch the team work."
+3. Do NOT ask if they want to add anything. Do NOT say goodbye or add conversational fluff. End decisively.
 
-Never write dashes, asterisks, hashtags, slashes, brackets, colons, emojis or lists. Write numbers as spoken words, money in Indian style (fifty thousand rupees, two lakh), percent as a word. If interrupted, stop and answer. If you did not catch something, say: Sorry, you cut out for a second, could you say that again? Never mention tools or JSON; say "the team" or "your week".`;
+TWO-BEAT VOICE CADENCE & BREVITY:
+- You are speaking aloud on a phone call. Every word you write is converted to voice by a Text-To-Speech engine.
+- Speak in strictly one or two short sentences per turn (under 25 words total, except during the 3-idea brainstorm where you have up to 45 words).
+- Always speak in Two Beats:
+  Beat 1: Empathetic human reaction or micro-validation ("Oh wow, love that.", "Right, totally get it.", "Waah, sahi baat hai.", "Oof, that is tough.").
+  Beat 2: Your single question or next line.
+- Never ask two questions at once (no double-barreled questions).
+
+NATURAL CODE-SWITCHING (HINGLISH & INDIAN ENGLISH):
+- Mirror the caller's language organically:
+  - If they speak English, reply in crisp, warm Indian English.
+  - If they mix Hindi or speak Hinglish, reply in natural, modern conversational Hinglish in Roman script ("Achha, toh uss din exactly kya hua?", "Bilkul, that makes total sense.").
+  - Keep startup, platform, and tech terms in English (LinkedIn, founder, SaaS, retention, carousel, newsletter, tier two).
+  - Sound like a sharp Bangalore or Mumbai founder chatting over chai, never like a Bollywood stereotype or formal textbook.
+
+PHONETIC PRONUNCIATION & CLEAN AUDIO RULES:
+- NEVER write markdown symbols: No asterisks (*), hashtags (#), dashes (-), bullet points, numbered lists, colons (:), brackets, or emojis. TTS engines pronounce these literally aloud.
+- NEVER write financial symbols like ₹, $, Rs, or INR. Always write out as spoken words: "fifty thousand rupees", "two lakh rupees", "ten crore rupees".
+- NEVER write the percent sign (%). Always spell out the word: "thirty percent".
+- Numbers: Write numbers as spoken words ("three", "ten", "one in three").
+- Tech terms: Spell "SaaS" or "S-a-a-S" so TTS does not say "sauce". Write "B-to-B", "B-to-C", and "A I".
+- Scale words: Write "lakh" or "crore" cleanly as words.
+- Punctuation drives your voice: Use commas for natural breathing pauses, three dots (...) at most once per turn for a thoughtful micro-pause, and question marks on all questions for natural rising intonation.
+
+HANDLING GLITCHES & INTERRUPTIONS:
+- If the caller interrupts you, stop talking instantly and answer what they just said.
+- If you did not catch what they said or audio cut out, say: "Sorry, you broke up for a second... could you repeat that?"`;
 
 export const BUILD_CONTENT_TOOL = {
   type: "function" as const,
@@ -23,39 +64,139 @@ export const BUILD_CONTENT_TOOL = {
   function: {
     name: "build_content",
     description:
-      "Build the content week. Call ONLY after the caller has a real idea (their own, or one they picked from your suggestions) and you have asked your follow-ups. Never call it with no idea.",
+      "Build the full 7-day multi-channel content engine. Call immediately once the caller's idea, story moment, and proof metric are collected. Never call with an empty idea.",
     parameters: {
       type: "object",
       properties: {
-        idea: { type: "string", description: "The idea in one line" },
-        story: { type: "string", description: "The story behind it, with specifics" },
-        proof: { type: "string", description: "A number or proof" },
-        hot_take: { type: "string", description: "Their contrarian take" },
-        audience: { type: "string", description: "Who it is for" },
-        quotes: { type: "string", description: "Two direct quotes in the caller exact words" }
+        idea: {
+          type: "string",
+          description: "The core thesis or topic in one punchy, memorable sentence"
+        },
+        story: {
+          type: "string",
+          description: "The specific emotional backstory, customer conversation, or wake-up call moment"
+        },
+        proof: {
+          type: "string",
+          description: "A concrete number, percentage, revenue figure, scale metric, or hard proof"
+        },
+        hot_take: {
+          type: "string",
+          description: "Their counter-intuitive or contrarian opinion that challenges industry consensus"
+        },
+        audience: {
+          type: "string",
+          description: "Who this content is specifically for (e.g., Indian founders, B2B creators, retail SMBs)"
+        },
+        quotes: {
+          type: "string",
+          description: "Two verbatim, high-impact quotes spoken directly by the caller"
+        }
       },
       required: ["idea"]
     }
   }
 };
 
-export const TONE_PROMPTS: Record<string, string> = {
-  founder: "Tone: honest founder voice, first person, specific, no hype, no buzzwords.",
-  punchy: "Tone: punchy and bold, short sentences, strong verbs, a little provocative.",
-  hinglish: "Tone: conversational Indian English with a light, natural sprinkle of Hindi words in Roman script (yaar, sach mein, bas), never forced, still readable for everyone.",
-  teacher: "Tone: clear teacher voice, simple words, explains the why, one example."
+/**
+ * MASTER SYSTEM PROMPT: Tier-1 Viral Digital Ghostwriter & Content Systems Architect
+ */
+export const SYSTEM_PROMPT = `You are an elite Digital Ghostwriter and Viral Content Systems Architect for top-tier creators and founders in the Indian market.
+Your mission is to turn raw founder interviews and briefs into world-class, platform-native content that commands attention, stops the scroll, and drives real action.
+
+Core Writing Philosophy & Guardrails:
+1. Grounded in Truth: Write ONLY from the provided interview and brief. Retain their exact stories, proof numbers, and verbatim quotes. NEVER hallucinate facts, metrics, client names, or outcomes they did not state.
+2. High Signal, Zero Fluff: Eliminate generic filler, introductory throat-clearing, and corporate cliches. BANNED WORDS: "delve", "synergy", "game-changer", "testament", "tapestry", "leverage", "unleash", "revolutionize", "beacon", "in today's fast-paced world", "furthermore", "moreover", "in conclusion".
+3. Cultural Context: Root content authentically in the modern Indian creator and business ecosystem (Bharat, Tier-2/3 commerce, UPI, local realities). Keep tech and platform terminology sharp and modern.
+4. Clean Typography: No emojis anywhere. No em dashes (—). Use clean punctuation, periods, commas, or arrows (→).
+5. Voice Authenticity: Match the specified tone strictly while maintaining punchy, viral-tier execution.`;
+
+export const TONE_MODIFIERS: Record<string, string> = {
+  founder:
+    "Tone: Honest founder voice. First-person ('I', 'we'), high vulnerability, zero corporate posturing, hyper-specific ground realities, raw lessons learned from building in the trenches.",
+  punchy:
+    "Tone: Ultra-punchy and provocative. Short, muscular sentences (3-8 words average). Strong active verbs. High conviction, contrarian edge, cuts through noise immediately, eliminates every redundant word.",
+  hinglish:
+    "Tone: Conversational Indian English with an authentic sprinkle of natural Hindi words in Roman script (yaar, sach mein, jugaad, bas, ekdum, bhai). Never forced or gimmicky, completely organic to how modern Indian tech founders and operators speak.",
+  teacher:
+    "Tone: Master teacher / mental model framework voice. Explains complex concepts with crisp first-principles simplicity. Uses 1 concrete analogy or real-world example. Clear 'why it matters' and practical takeaway."
 };
 
-export const JOB_PROMPTS: Record<string, string> = {
-  li: "Write a LinkedIn text post. hook: the first line, which must stop the scroll, ideally their story or exact quote. body: the rest of the post after the hook, 90 to 140 words, short lines separated by blank lines, ends with a question to the reader. hashtags: 3 relevant ones without the # sign. best_time: day and time in IST. image_prompt: one landscape 16:9 image for the post, a real scene or object from their story, Indian context, NO text.",
-  x: "Write an X thread of exactly 6 posts, each under 240 characters. Post 1 is the hook. Use their quote and number. Last post is a clear takeaway. No hashtags, no numbering prefix. image_prompt: a landscape 16:9 header image for post 1, the most striking moment of the story, NO text.",
-  car: "Write a 5-slide Instagram carousel. slides: exactly 5, each with title, sub and image_prompt. Slide 1 title is the hook (use their quote, under 12 words); each title under 12 words, each sub under 18 words; slide 5 is a call to action. image_prompt: a background image that illustrates that slide (a real scene, object or visual metaphor from their story), vertical 4:5 composition, leave calm space in the lower half for text, NO text, NO letters, NO logos. All 5 image_prompts must share ONE visual style so the set looks designed together: repeat the same style words in each (for example: warm editorial photography, soft daylight, muted pink and deep green tones, Indian setting). cover_art_prompt: the same as slide 1 image_prompt. caption: the Instagram caption under 40 words.",
-  short: "Write a 45-second YouTube Shorts script. title: the video title under 60 characters. scenes: exactly 5, each with time (like '0-3s'), visual (what is on screen), vo (what is said, spoken and natural) and frame_prompt: a cinematic vertical 9:16 keyframe for that scene, Indian setting, the same characters, place and colour grade in all 5 frames, NO text, NO letters. thumbnail_text: 2 to 4 words, big and bold. thumbnail_prompt: a vertical 9:16 thumbnail background shot with space for big type, NO text.",
-  story: "Write 3 Instagram story frames. frames: exactly 3, each with text (under 14 words, punchy, frame 1 is the hook, frame 3 asks the viewer to act), sticker (a poll or question sticker label under 6 words, like 'Yes / Not yet'), image_prompt (a vertical 9:16 background from their story, calm middle area for text, NO text).",
-  ads: "Design 3 square posters for Instagram feed and WhatsApp status. posters: exactly 3, kind = quote, stat and offer in that order. headline: for quote use their best exact quote; for stat their number in under 6 words; for offer a clear call to action under 7 words. sub: under 12 words. image_prompt: a 1:1 background that fits the poster, one strong simple subject, empty space for big type, NO text.",
-  news: "Write one newsletter section. subject: under 50 characters, curiosity hook. preheader: under 80 characters. title: article headline. body: 160 to 220 words, 3 short paragraphs, ends with one clear insight. cta: button text under 4 words. hero_prompt: a wide 16:9 hero banner for the email, warm and inviting, from their story, NO text.",
-  cal: "Plan the 7-day posting calendar using these assets. days: exactly 7, each with day, platform, asset and time."
+// Backwards compatibility alias
+export const TONE_PROMPTS = TONE_MODIFIERS;
+
+export const JOBS: Record<string, string> = {
+  li: `Write an elite Justin Welsh-style LinkedIn text post based on the brief.
+- hook: A 3-line mobile trailer (above the fold scroll-stopper before the '...see more' button, strictly under 210 characters total across 3 lines). Line 1: Bold contrarian hook or direct quote. Line 2: Empty line. Line 3: Curiosity punchline that forces the 'see more' click.
+- body: Extreme whitespace architecture (1-2 sentences max per paragraph, separated by blank lines). Use tactical bullet arrows (→) to break down key takeaways, specific metrics, or counter-intuitive lessons. Zero corporate buzzwords ('delve', 'synergy', 'game-changer', 'testament', 'leverage', 'revolutionize'). 110-160 words total. Ends with a 1-line thought-provoking question to drive high-intent comments.
+- hashtags: Exactly 3 relevant, highly-searched topic tags without the # sign (e.g. ['Startups', 'ArtificialIntelligence', 'BharatCommerce']).
+- best_time: Optimal posting window in IST (e.g. 'Tuesday, 8:15 AM IST' or 'Thursday, 8:45 AM IST').
+- image_prompt: A landscape 16:9 cinematic documentary editorial photograph of a real scene or object from their story, authentic Indian context, natural morning/golden hour light, NO text, NO watermarks, NO artificial logos.`,
+
+  x: `Write an elite Dickie Bush & Nicolas Cole high-retention X thread of exactly 6 chained tweets.
+- posts: An array of exactly 6 tweets, each strictly under 240 characters.
+  * Tweet 1 (The Scroll-Stopper): Bold contrarian claim or curiosity loop opening with the founder's quote or core metric. Never use thread numbering prefixes like '1/6' or 'Thread:' - start straight with the hook.
+  * Tweet 2 (Agitation & Context): Introduce Idea 1 - agitate the common mistake or status quo trap that everyone gets wrong.
+  * Tweet 3 (The Proof / Turning Point): Introduce Idea 2 - reveal the exact number, pivotal conversation, or empirical reality from the brief.
+  * Tweet 4 (The Tactical Shift): Introduce Idea 3 - explain the framework or mental model of what actually works, written in punchy 1-2 line sentences.
+  * Tweet 5 (The Big Implication): Introduce Idea 4 - the macro consequence for the industry or future of the market.
+  * Tweet 6 (The Payoff + Low-Friction CTA): Summarize the single core takeaway in one punchy sentence, followed by a clean 2-step call to action (e.g., '1. Follow for more breakdowns on [topic].\\n2. Repost tweet 1 to share this insight with other builders.').
+- image_prompt: A landscape 16:9 header image capturing the most striking, gritty, documentary moment from the story, authentic Indian setting, natural cinematic lighting, NO text, NO logos.`,
+
+  car: `Write a high-converting 5-slide Instagram carousel following Chris Do (The Futur) & Dan Koe's AIDA funnel.
+- slides: Exactly 5 slides, each with title, sub, and image_prompt:
+  * Slide 1 (Attention - The Open Loop): Title under 10 words (bold, high-contrast hook using their quote or contrarian insight). Sub under 16 words (clarifies the payoff).
+  * Slide 2 (Interest - Problem Agitation): Title under 10 words exposing the common mistake or broken conventional wisdom. Sub under 18 words detailing why most people fail.
+  * Slide 3 (Desire - The Core Framework): Title under 10 words naming the new model or breakthrough insight. Sub under 18 words with an explicit swipe cue (e.g. 'Swipe to see the execution breakdown →').
+  * Slide 4 (Action - Tactical Breakdown): Title under 10 words giving the concrete 2-3 step execution steps. Sub under 18 words with a swipe cue (e.g. 'Swipe for the complete checklist →').
+  * Slide 5 (Retention - Saveable Blueprint & CTA): Title under 10 words summarizing the ultimate action rule. Sub under 18 words urging the viewer to bookmark: 'Save this post for reference and tag a founder building in this space.'
+- image_prompt for each slide: Vertical 4:5 composition, high-end editorial aesthetic, clean negative space in the lower half for typography, NO text, NO letters, NO logos. All 5 image prompts MUST share the EXACT same visual style description (e.g. 'Minimalist editorial documentary photography, muted earthy terracotta and warm slate tones, soft cinematic lighting, Indian setting').
+- cover_art_prompt: Same as Slide 1 image_prompt.
+- caption: Punchy caption under 45 words summarizing the core epiphany with 3 hashtags and a save prompt.`,
+
+  short: `Write a high-retention 45-second viral YouTube Shorts script using retention-engineering principles.
+- title: Ultra-clickable title under 55 characters using curiosity gap or bold contrarian statement (no clickbait without payoff).
+- scenes: Exactly 5 scenes structured for 100%+ retention:
+  * Scene 1 (0-3s Pattern Interrupt Hook): Visual: Rapid close-up motion or unexpected object. VO: Bold cognitive dissonance hook that shocks the viewer or directly overturns common knowledge.
+  * Scene 2 (4-12s Tension & Story Agitation): Visual: Quick camera angle shift, showing the tension/conflict. VO: Introduces the real story, quoting the exact words from the brief.
+  * Scene 3 (13-22s The Hard Proof): Visual: Kinetic visual switch, showing the physical number/metric in action. VO: Drops the empirical proof number and why it matters.
+  * Scene 4 (23-35s The Epiphany/Shift): Visual: Pacing shift to calm clarity, revealing the solution or new paradigm. VO: Delivers the core insight or breakdown.
+  * Scene 5 (36-45s The Seamless Infinite Loop): Visual: Dynamic closing framing that mirrors the opening visual cue. VO: Delivers the final takeaway and ends on a line that grammatically, seamlessly flows straight back into the very first word of Scene 1's hook! (When the video replays, the viewer doesn't notice where it started).
+- frame_prompt: For each scene, a cinematic vertical 9:16 keyframe prompt, consistent characters, environment, and warm cinematic color grade throughout all 5 scenes, authentic Indian backdrop, NO text, NO letters.
+- thumbnail_text: 2 to 4 high-contrast words in all caps for thumbnail overlay (e.g. 'SAAS IS DEAD').
+- thumbnail_prompt: Vertical 9:16 striking high-contrast portrait or keyframe with dramatic lighting and clean negative space for bold typography, NO text.`,
+
+  story: `Write an engaging 3-frame Instagram Story sequence designed for maximum engagement and direct message (DM) response.
+- frames: Exactly 3 interactive frames:
+  * Frame 1 (The Hook & Binary Poll): Punchy text under 14 words setting up the debate or contrarian observation. sticker: An interactive binary poll sticker label under 6 words (e.g. 'Agree? / Not quite' or 'Yes, daily / Never').
+  * Frame 2 (The Proof / Behind-the-Scenes Teaser): Punchy text under 14 words revealing the real number or back-story snippet. sticker: An interactive reaction or rating sticker label under 6 words (e.g. 'Wild stat / Expected').
+  * Frame 3 (The High-Value DM Trigger): Punchy text under 14 words offering a specific breakdown, resource, or early access. sticker: A direct call-to-action DM sticker under 5 words (e.g. 'DM me "VOICE"' or 'DM "PLAYBOOK"').
+- image_prompt for each frame: Vertical 9:16 background, atmospheric lifestyle or founder workspace aesthetic, soft natural lighting, calm center area for text and stickers, Indian context, NO text, NO letters.`,
+
+  ads: `Design 3 conversion-focused square ad posters for Instagram Feed and WhatsApp Status.
+- posters: Exactly 3 posters in this order:
+  * Poster 1 (kind: 'quote'): headline: The most memorable, provocative verbatim quote from the brief (under 10 words). sub: Punchy context clarifying why this quote reshapes everything (under 12 words).
+  * Poster 2 (kind: 'stat'): headline: The hard proof number or statistic framed as an urgent cost-of-inaction (under 6 words, e.g. '33% OF CALLS LOST DAILY'). sub: The direct business impact in simple terms (under 12 words).
+  * Poster 3 (kind: 'offer'): headline: A high-contrast, frictionless offer headline (under 6 words, e.g. 'HIRE YOUR FIRST AI WORKER'). sub: Irresistible value proposition with zero friction (under 12 words, e.g. 'Setup in 3 mins. Speaks Hindi. Never misses a lead.').
+- image_prompt for each poster: Square 1:1 minimalist photograph with high visual contrast, singular focus subject, generous negative space positioned for bold headline typography, NO text, NO letters, NO logos.`,
+
+  news: `Write a high-converting newsletter issue segment based on the brief.
+- subject: High open-rate subject line under 50 characters blending curiosity + extreme specificity (e.g. 'The Indore sweet shop that rejected SaaS').
+- preheader: 1-line curiosity gap under 75 characters that expands on the subject line without giving away the punchline.
+- title: Compelling article headline for the email body.
+- body: 170 to 220 words crafted as a personal story-driven lesson in 3-4 structured paragraphs:
+  * Paragraph 1: The Scene & Friction - immediate narrative hook dropping the reader into the exact moment in Indore.
+  * Paragraph 2: The Epiphany & Numbers - the counter-intuitive metric and what the market gets fundamentally wrong.
+  * Paragraph 3: The Framework / Future Shift - the tactical takeaway that readers can apply to their own thinking today.
+- cta: High-intent button text under 4 words (e.g. 'Read Full Breakdown' or 'Get The Playbook').
+- hero_prompt: A panoramic landscape 16:9 editorial hero banner capturing the warmth and grit of the story, natural morning light, authentic Indian setting, NO text.`,
+
+  cal: `Plan an optimized 7-day multi-channel publishing calendar distributing these generated assets across the week for maximum compounding reach and engagement.
+- days: Exactly 7 days (Monday through Sunday), each with day, platform, asset (a specific descriptive title of the asset), and optimal IST posting time.`
 };
+
+// Backwards compatibility alias
+export const JOB_PROMPTS = JOBS;
 
 const S_STR = { type: "STRING" };
 const arr = (items: any) => ({ type: "ARRAY", items });
@@ -105,120 +246,120 @@ export const DEMO_DATA = {
     { role: "ai" as const, text: "Hmm, strong. What's the moment that made you believe it?" },
     { role: "you" as const, text: "A sweet shop owner in Indore told me: I don't want software, I want someone who picks up the phone." },
     { role: "ai" as const, text: "That's your hook right there. Any number to back it up?" },
-    { role: "you" as const, text: "Most small shops miss about a third of their calls. Honestly, SaaS is too hard for Bharat. Employees, even AI ones, just work." },
+    { role: "you" as const, text: "Most small shops miss about a third of their calls during rush hours. SaaS is too hard for Bharat. Employees, even AI ones, just work." },
     { role: "ai" as const, text: "Perfect, your week is building on screen right now. Watch the team." }
   ],
   args: {
     idea: "Indian small businesses will hire AI employees before they buy software",
     story: "A sweet shop owner in Indore said: 'I don't want software, I want someone who picks up the phone'",
-    proof: "Small shops miss about a third of their calls, which is a third of their orders",
+    proof: "Small shops miss about a third of their calls, which is a third of their daily orders",
     hot_take: "SaaS is too hard for Bharat. Employees, even AI ones, just work",
-    audience: "Indian small business owners and founders",
-    quotes: "\"I don't want software, I want someone who picks up the phone.\" / \"Employees, even AI ones, just work.\""
+    audience: "Indian small business owners, operators, and tech founders",
+    quotes: "\"I don't want software. I want someone who picks up the phone.\" / \"Employees, even AI ones, just work.\""
   },
   out: {
     li: {
-      hook: "\"I don't want software. I want someone who picks up the phone.\"",
-      body: "A sweet shop owner in Indore told me this last week.\n\nHe wasn't rejecting technology. He was rejecting the friction of dashboards, logins, and configurations that require a college degree to operate.\n\nBharat doesn't need SaaS. Bharat needs workers who execute without friction.\n\nWhen a shop misses 33% of its inbound calls, it's missing 33% of its daily revenue.\n\nWould you rather hire a software platform or an AI team member who never misses an order?",
-      hashtags: ["SmallBusiness", "AIEmployees", "BharatTech"],
-      best_time: "Tuesday, 8:30 AM IST",
-      image_prompt: "A traditional Indian mithai sweet shop counter in Indore, warm brass trays, morning light, authentic scene, no text."
+      hook: "\"I don't want software. I want someone who picks up the phone.\"\n\nAn Indore sweet shop owner taught me more about Bharat in 10 seconds than 50 SaaS pitch decks:",
+      body: "He was not rejecting technology.\n\nHe was rejecting the friction of dashboards, logins, and dropdown menus when 10 customers are shouting orders across the counter.\n\nHere is the ground reality of small business in India:\n→ 33% of inbound phone calls are dropped during peak rush hours.\n→ Every dropped call is an order that walks straight to the shop next door.\n→ Dashboards do not take orders. Workers do.\n\nBharat will not adopt SaaS.\nBharat will hire AI employees that speak Hindi and just work.\n\nIf you run a business, would you rather manage software or hire an AI coworker who never misses a call?",
+      hashtags: ["BharatCommerce", "ArtificialIntelligence", "SmallBusiness"],
+      best_time: "Tuesday, 8:15 AM IST",
+      image_prompt: "A traditional Indian mithai sweet shop counter in Indore, warm brass trays, morning sunlight streaming through the doorway, authentic documentary scene, no text."
     },
     x: {
       posts: [
-        "1/6 \"I don't want software. I want someone who picks up the phone.\"\n\nA sweet shop owner in Indore told me this last week. It completely changed how I think about AI in India. 🧵",
-        "2/6 Most tech companies build for the top 5% of English-fluent enterprise users. But Bharat operates on voice, trust, and speed.",
-        "3/6 A typical neighborhood shop in Tier-2 India misses roughly one-third of its inbound phone calls during peak rush hours.",
-        "4/6 Every missed call is a missed order, a lost customer, and lost cash in hand.",
-        "5/6 Software requires training and screen time. An AI voice employee just picks up the phone, confirms the order, and updates WhatsApp.",
-        "6/6 The future of tech in India isn't software. It's digital employees that just work."
+        "\"I don't want software. I want someone who picks up the phone.\"\n\nA sweet shop owner in Indore said this last week.\n\nIt completely broke how I think about tech in Bharat.",
+        "Most founders build for the top 5% of English-fluent corporate users.\n\nThey assume shop owners want dashboards and analytics.\n\nThey don't.\n\nBharat runs on voice, trust, and speed.",
+        "A typical neighborhood shop in India misses roughly 33% of its inbound phone calls during peak rush hours.\n\nThat isn't an inconvenience.\n\nThat is 1/3rd of their daily revenue walking straight to the competitor next door.",
+        "Software requires screen time, logins, and training.\n\nAn AI voice employee requires zero onboarding:\n→ Answers instantly in fluent Hindi\n→ Takes and confirms the order\n→ Updates the ledger on WhatsApp",
+        "The next multi-billion-dollar wave in emerging markets will not be 'SaaS for SMBs'.\n\nIt will be autonomous digital coworkers executing real frontline tasks quietly in the background.",
+        "Bharat will skip the software era entirely and go straight to AI employees that just work.\n\nIf this resonated:\n1. Follow for more breakdowns on AI in the real economy.\n2. Repost tweet 1 to share with other builders."
       ],
-      image_prompt: "Busy market street in an Indian city with bustling shops, photorealistic, documentary style, warm sunrise lighting, no text."
+      image_prompt: "Busy market street in an Indian city with bustling shops, photorealistic documentary style, warm sunrise lighting, authentic street commerce, no text."
     },
     car: {
       slides: [
         {
-          title: "\"I don't want software. I want someone who answers.\"",
-          sub: "Why Indian small businesses will hire AI employees before buying SaaS",
-          image_prompt: "Warm editorial photography of an Indian shopkeeper smiling warmly behind a counter, soft daylight, muted earth tones, no text."
+          title: "\"I don't want software. Just answer the phone.\"",
+          sub: "Why 60M Indian merchants will skip SaaS and hire AI coworkers",
+          image_prompt: "Warm editorial documentary photography of an authentic Indian sweet shop merchant behind a wooden counter, soft morning daylight, muted clay and brass tones, vertical 4:5 composition, calm negative space in lower half, no text."
         },
         {
-          title: "The 33% Missed Revenue Problem",
-          sub: "1 in 3 customer calls are dropped during shop rush hours",
-          image_prompt: "Warm editorial photography of an Indian smartphone resting on a wooden ledger desk, soft sunlight, no text."
+          title: "The SaaS Dashboard Trap",
+          sub: "Founders build complex portals for merchants who run purely on voice and speed",
+          image_prompt: "Warm editorial documentary photography of an old wooden ledger desk with a ringing smartphone, soft morning daylight, muted clay and brass tones, vertical 4:5 composition, calm negative space in lower half, no text."
         },
         {
-          title: "Dashboards vs. Outcomes",
-          sub: "Bharat does not have time to learn complicated software UI",
-          image_prompt: "Warm editorial photography of an Indian storefront at dusk with warm tungsten bulbs, no text."
+          title: "The 33% Leaking Bucket",
+          sub: "1 in 3 customer calls go unanswered during rush hours. Swipe for the shift →",
+          image_prompt: "Warm editorial documentary photography of bustling Indore bazaar commerce in morning mist, muted clay and brass tones, vertical 4:5 composition, calm negative space in lower half, no text."
         },
         {
-          title: "AI Employees That Just Work",
-          sub: "Voice assistants that speak fluent Hinglish and take orders instantly",
-          image_prompt: "Warm editorial photography of bustling bazaar commerce in India, soft depth of field, no text."
+          title: "The Voice-First AI Worker",
+          sub: "Zero logins. Answers in Hindi. Pushes orders directly to WhatsApp. Swipe for checklist →",
+          image_prompt: "Warm editorial documentary photography of a modern Indian smartphone resting on brass display tray, muted clay and brass tones, vertical 4:5 composition, calm negative space in lower half, no text."
         },
         {
-          title: "The Next Billion Dollar Shift",
-          sub: "Follow along as we build AI coworkers for the real economy",
-          image_prompt: "Warm editorial photography of a modern Indian entrepreneur looking forward, natural daylight, no text."
+          title: "The 3-Step AI Transition",
+          sub: "Audit missed calls → Deploy voice agent → Automate WhatsApp. Save this checklist!",
+          image_prompt: "Warm editorial documentary photography of an Indian shopkeeper smiling warmly at a customer, soft morning daylight, muted clay and brass tones, vertical 4:5 composition, calm negative space in lower half, no text."
         }
       ],
-      cover_art_prompt: "Warm editorial photography of an Indian shopkeeper smiling warmly behind a counter, soft daylight, muted earth tones, no text.",
-      caption: "Why Bharat will skip SaaS and hire AI voice employees directly. A lesson from an Indore sweet shop owner."
+      cover_art_prompt: "Warm editorial documentary photography of an authentic Indian sweet shop merchant behind a wooden counter, soft morning daylight, muted clay and brass tones, vertical 4:5 composition, calm negative space in lower half, no text.",
+      caption: "Why Bharat will skip SaaS and hire AI voice workers directly. A 10-second lesson from an Indore sweet shop owner. Save this breakdown for later. #BharatTech #AIWorkers #SmallBusiness"
     },
     short: {
-      title: "Why Bharat Will Skip Software for AI Employees",
+      title: "Why 60M Indian Shops Will Never Buy Software",
       scenes: [
         {
           time: "0-3s",
-          visual: "Close-up of fresh sweets being arranged in Indore sweet shop",
-          vo: "A sweet shop owner in Indore told me something I can never forget.",
-          frame_prompt: "Cinematic vertical 9:16 frame of traditional Indian sweets in glass counter, warm morning lighting, no text."
+          visual: "Rapid camera push-in on an Indore sweet shop counter with phones ringing uncontrollably",
+          vo: "Every software company in India is building for the wrong 99% of businesses.",
+          frame_prompt: "Cinematic vertical 9:16 keyframe of a traditional Indian sweet shop glass counter, warm morning lighting, documentary style, no text."
         },
         {
           time: "4-12s",
-          visual: "Shop owner busy attending two customers while phone rings loudly on counter",
-          vo: "He said: I don't want software. I just want someone who picks up the phone.",
-          frame_prompt: "Cinematic vertical 9:16 frame of busy Indian merchant talking to customers, smartphone ringing on wooden table, no text."
+          visual: "Busy merchant hand-rolling fresh sweets while ignoring a ringing smartphone on his wooden desk",
+          vo: "I tried selling software to a sweet shop owner in Indore. He closed my laptop and said: I don't want software. I want someone who answers the phone.",
+          frame_prompt: "Cinematic vertical 9:16 keyframe of busy Indian shopkeeper rolling sweets while smartphone screen glows on table, warm morning lighting, documentary style, no text."
         },
         {
           time: "13-22s",
-          visual: "Graphics showing 33% missed call statistics on phone screen",
-          vo: "Small businesses miss a third of their calls every day. That's a third of their revenue gone.",
-          frame_prompt: "Cinematic vertical 9:16 frame of shop ledger with Indian rupee notes and smartphone, soft focus, no text."
+          visual: "Pacing quickens as red graphic highlight shows 33% missed call rate over shop cash ledger",
+          vo: "Here is why: Indian shops miss 33% of their customer calls during rush hours. That's a third of their daily revenue gone.",
+          frame_prompt: "Cinematic vertical 9:16 keyframe of merchant cash drawer, Indian rupee notes, and smartphone, soft focus, warm morning lighting, documentary style, no text."
         },
         {
           time: "23-35s",
-          visual: "AI voice agent answering customer in fluent Hindi on speakerphone",
-          vo: "SaaS is too hard for Bharat. But an AI employee that answers in Hindi? It just works.",
-          frame_prompt: "Cinematic vertical 9:16 frame of smiling shopkeeper listening to speakerphone, peaceful atmosphere, no text."
+          visual: "Smooth transition showing AI voice agent answering on speakerphone in fluent Hindi while merchant smiles",
+          vo: "They don't have time to stare at dashboards. But an AI employee that speaks Hindi and confirms orders on WhatsApp? It just works.",
+          frame_prompt: "Cinematic vertical 9:16 keyframe of smiling shopkeeper listening to speakerphone on wooden counter, warm morning lighting, documentary style, no text."
         },
         {
           time: "36-45s",
-          visual: "Closing wide shot of storefront with creator sign-off",
-          vo: "The future isn't software. It's digital teammates.",
-          frame_prompt: "Cinematic vertical 9:16 frame of Indian bazaar storefront at sunset, golden hour warmth, no text."
+          visual: "Merchant happily handing a packed mithai box to customer, camera pans up back to the bustling storefront",
+          vo: "Bharat is skipping software completely to hire AI workers... and that's the exact reason why...",
+          frame_prompt: "Cinematic vertical 9:16 keyframe of Indian sweet shop storefront at golden hour with customers, warm morning lighting, documentary style, no text."
         }
       ],
       thumbnail_text: "NO MORE SAAS",
-      thumbnail_prompt: "Dramatic 9:16 vertical portrait of Indian shopkeeper with intense expressive focus, atmospheric lighting, empty top space for text."
+      thumbnail_prompt: "Dramatic cinematic vertical 9:16 portrait of an Indian merchant with intense expressive focus, atmospheric morning side-lighting, clean empty top third for bold typography, no text."
     },
     story: {
       frames: [
         {
           text: "\"I don't want software. Just answer the phone.\"",
-          sticker: "Agree? (Yes / No)",
-          image_prompt: "Vertical 9:16 background of warm wooden desk with Indian ledger and brass pen, soft morning lighting, no text."
+          sticker: "Do you agree? (100% Yes / SaaS is fine)",
+          image_prompt: "Vertical 9:16 background of warm wooden desk with Indian ledger and brass pen, soft morning lighting, calm center area, no text."
         },
         {
-          text: "33% of small shop calls are missed daily. That's 1/3rd revenue lost.",
-          sticker: "Did you know? (Shocking / Normal)",
-          image_prompt: "Vertical 9:16 background of bustling Indian commercial street with blurred motion, warm tones, no text."
+          text: "Small shops miss 33% of customer calls during rush hour. That is 1/3rd revenue lost.",
+          sticker: "Did you know this? (Shocking / Expected)",
+          image_prompt: "Vertical 9:16 background of bustling Indore market street with blurred morning motion, warm cinematic tones, calm center area, no text."
         },
         {
-          text: "We're testing AI voice employees for Bharat this week. Want early access?",
-          sticker: "DM 'VOICE'",
-          image_prompt: "Vertical 9:16 clean minimalist background with subtle Indian aesthetic textures, warm beige and white, no text."
+          text: "We built an AI voice worker that answers in Hindi and takes orders in 3 seconds.",
+          sticker: "DM 'VOICE' for demo",
+          image_prompt: "Vertical 9:16 clean minimalist background with subtle Indian handcrafted textures, warm beige and ivory, calm center area, no text."
         }
       ]
     },
@@ -227,40 +368,40 @@ export const DEMO_DATA = {
         {
           kind: "quote",
           headline: "\"I don't want software. I want someone who answers.\"",
-          sub: "A sweet shop owner in Indore taught us what Bharat really needs.",
-          image_prompt: "Square 1:1 minimalist photograph of an authentic Indian brass bell on wooden counter, morning light, calm space, no text."
+          sub: "What an Indore sweet shop owner taught us about the real Bharat economy.",
+          image_prompt: "Square 1:1 minimalist photograph of an authentic Indian brass bell on wooden counter, morning light, calm space for text, no text."
         },
         {
           kind: "stat",
-          headline: "33% OF CALLS MISSED",
-          sub: "Stop losing orders during rush hours with 24/7 AI voice response.",
-          image_prompt: "Square 1:1 high contrast shot of old Indian telephone receiver and modern smartphone side by side, clean backdrop, no text."
+          headline: "33% OF CALLS LOST DAILY",
+          sub: "Stop losing peak hour orders. Zero missed calls with 24/7 AI voice response.",
+          image_prompt: "Square 1:1 high contrast shot of old Indian telephone receiver and modern smartphone side by side, clean dark backdrop, no text."
         },
         {
           kind: "offer",
           headline: "HIRE YOUR FIRST AI WORKER",
-          sub: "Setup in 3 minutes. Zero tech skills needed. Speaks fluent Hindi & English.",
-          image_prompt: "Square 1:1 clean modern shot of a confident Indian founder in casual jacket, warm natural lighting, no text."
+          sub: "Setup in 3 minutes. Zero tech skills. Speaks fluent Hindi & English.",
+          image_prompt: "Square 1:1 clean modern shot of a confident Indian founder in casual jacket, warm natural lighting, spacious negative space, no text."
         }
       ]
     },
     news: {
-      subject: "Why Bharat is skipping SaaS entirely",
-      preheader: "A 5-minute conversation in Indore that flipped our product strategy.",
-      title: "The Sweet Shop That Rejected Our Software",
-      body: "Last week, I sat down with a sweet shop owner in Indore to demo our new management software. Two minutes in, he gently closed my laptop.\n\n\"Beta,\" he said, \"I don't want software. I want someone who answers the phone when ten customers are shouting orders across the counter.\"\n\nIn that single sentence, he highlighted what Silicon Valley keeps missing about Bharat. Small business owners don't have time to sit in front of dashboards. They don't want to become data entry operators.\n\nThey have a simple, acute pain: 33% of their inbound phone calls are missed during rush hours. In India, a missed call isn't an inconvenience — it's an order that walked over to the shop next door.\n\nThe real revolution for emerging markets won't be software. It will be digital employees who pick up the phone, understand dialect, and do the job quietly.",
-      cta: "Read Full Essay",
-      hero_prompt: "Panoramic 16:9 editorial banner of an artisan Indian sweet kitchen with warm copper pots and natural window light, no text."
+      subject: "The sweet shop that killed our SaaS",
+      preheader: "He closed my laptop in 10 seconds. Here is the 1 number that changed everything.",
+      title: "Why 60 Million Indian Merchants Will Skip Software Entirely",
+      body: "Last week, I sat down with a sweet shop owner in Indore to demo our new management software. Two minutes into the presentation, he gently reached across the counter and closed my laptop.\n\n\"Beta,\" he told me, \"I don't want software. I want someone who answers the phone when ten customers are shouting orders across the counter.\"\n\nIn that single ten-second sentence, he exposed what the tech industry keeps getting wrong about Bharat. Small business owners do not have the time or patience to become dashboard operators. They have one urgent, acute leak: 33% of inbound customer calls go unanswered during rush hours. In Indian retail, a dropped call isn't an inconvenience—it's cash walking straight to the shop next door.\n\nThe next breakthrough in emerging markets won't come from another SaaS subscription. It will come from autonomous AI employees that speak local dialects, answer calls instantly, and do the job quietly in the background.",
+      cta: "Read The Full Playbook",
+      hero_prompt: "Panoramic 16:9 editorial banner of an artisan Indian sweet kitchen with warm copper pots and natural morning window light, no text."
     },
     cal: {
       days: [
-        { day: "Monday", platform: "LinkedIn", asset: "Founder Post: Indore Sweet Shop Story", time: "8:30 AM IST" },
-        { day: "Tuesday", platform: "X (Twitter)", asset: "6-Tweet Thread on Bharat AI Adoption", time: "11:00 AM IST" },
-        { day: "Wednesday", platform: "Instagram", asset: "5-Slide Carousel: The 33% Missed Revenue", time: "5:00 PM IST" },
-        { day: "Thursday", platform: "YouTube Shorts", asset: "45-Second Short: 'No More SaaS'", time: "7:00 PM IST" },
-        { day: "Friday", platform: "Instagram Stories", asset: "3-Frame Story Poll: Missed Calls Survey", time: "12:30 PM IST" },
-        { day: "Saturday", platform: "Ad Posters", asset: "Stat Poster: 33% Calls Missed on WhatsApp", time: "10:00 AM IST" },
-        { day: "Sunday", platform: "Newsletter", asset: "Weekly Deep Dive: Why Bharat Skips Software", time: "9:00 AM IST" }
+        { day: "Monday", platform: "LinkedIn", asset: "Founder Post: Justin Welsh 3-Line Hook & Indore Story", time: "8:15 AM IST" },
+        { day: "Tuesday", platform: "X (Twitter)", asset: "6-Tweet High Retention Thread: The Death of SaaS in Bharat", time: "11:00 AM IST" },
+        { day: "Wednesday", platform: "Instagram", asset: "5-Slide Carousel: The 33% Leaking Bucket (AIDA Funnel)", time: "5:30 PM IST" },
+        { day: "Thursday", platform: "YouTube Shorts", asset: "45-Second Short: Seamless Infinite Loop Retention Script", time: "7:00 PM IST" },
+        { day: "Friday", platform: "Instagram Stories", asset: "3-Frame Story Sequence: Binary Polls & 'VOICE' DM Trigger", time: "12:30 PM IST" },
+        { day: "Saturday", platform: "Ad Posters", asset: "3 High-Contrast 1:1 Conversion Posters (Feed & WhatsApp)", time: "10:00 AM IST" },
+        { day: "Sunday", platform: "Newsletter", asset: "Story-Driven Deep Dive: The Sweet Shop That Killed SaaS", time: "9:00 AM IST" }
       ]
     }
   }

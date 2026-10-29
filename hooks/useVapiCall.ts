@@ -64,11 +64,12 @@ export function useVapiCall(
             if (msg.transcriptType === "final" && text.trim()) {
               setTranscript((prev) => [...prev, { role, text }]);
             }
-          } else if (msg.type === "tool-calls") {
-            const calls = msg.toolCallList || [];
+          } else if (msg.type === "tool-calls" || msg.type === "function-call") {
+            const calls = msg.toolCallList || (msg.functionCall ? [msg.functionCall] : []);
             for (const call of calls) {
-              if (call.function?.name === BUILD_CONTENT_TOOL.function.name) {
-                let args = call.function.arguments;
+              const fnName = call.function?.name || call.name;
+              if (fnName === BUILD_CONTENT_TOOL.function.name) {
+                let args = call.function?.arguments || call.arguments || call.parameters;
                 if (typeof args === "string") {
                   try {
                     args = JSON.parse(args);
@@ -119,34 +120,63 @@ export function useVapiCall(
           p[k] = { type: "string", description: (toolProps as any)[k].description };
         });
 
+        const personalizedGreeting = creatorName && creatorName.trim()
+          ? `Hey ${creatorName.trim()}! Riya here from the Content Desk. Kis idea ko poore hafte ke content mein badalna hai? Koi idea nahi hai toh bhi chalega, I'll help you pick one.`
+          : FIRST_MESSAGE;
+
         const assistantConfig = {
           name: "Riya · Content Desk",
-          firstMessage: FIRST_MESSAGE,
+          firstMessage: personalizedGreeting,
           firstMessageMode: "assistant-speaks-first",
           transcriber: {
             provider: "deepgram",
             model: "nova-3",
-            language: "multi"
+            language: "multi",
+            keywords: [
+              "lakh:2",
+              "crore:2",
+              "rupees:2",
+              "SaaS:2",
+              "Bharat:2",
+              "Indore:2",
+              "Hinglish:1",
+              "LinkedIn:1",
+              "founder:1",
+              "B2B:1",
+              "jugaad:2"
+            ],
+            smartFormat: true,
+            endpointing: 250
           },
           startSpeakingPlan: {
-            waitSeconds: 0.4,
-            smartEndpointingPlan: { provider: "vapi" }
+            waitSeconds: 0.35,
+            smartEndpointingPlan: { provider: "vapi" },
+            transcriptionEndpointingPlan: {
+              onPunctuationSeconds: 0.25,
+              onNoPunctuationSeconds: 0.8,
+              onNumberSeconds: 0.35
+            }
           },
           stopSpeakingPlan: {
             numWords: 2,
             voiceSeconds: 0.2,
-            backoffSeconds: 1
+            backoffSeconds: 0.8
           },
           backgroundSpeechDenoisingPlan: {
             smartDenoisingPlan: { enabled: true }
           },
           model: {
             provider: "openai",
-            model: "gpt-4.1-mini",
-            temperature: 0.7,
-            maxTokens: 220,
+            model: "gpt-4o-mini",
+            temperature: 0.65,
+            maxTokens: 160,
             emotionRecognitionEnabled: true,
-            messages: [{ role: "system", content: RIYA_PROMPT + "\n\nCaller name: " + creatorName }],
+            messages: [
+              {
+                role: "system",
+                content: RIYA_PROMPT + (creatorName && creatorName.trim() ? `\n\nCaller name: ${creatorName.trim()}` : "")
+              }
+            ],
             tools: [
               {
                 type: "function",
@@ -166,7 +196,7 @@ export function useVapiCall(
           voice: {
             provider: "vapi",
             voiceId: voiceId || "Naina",
-            speed: 1.0
+            speed: 1.02
           },
           clientMessages: ["transcript", "tool-calls", "speech-update", "conversation-update"]
         };

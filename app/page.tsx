@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { Header } from "@/components/Header";
 import { InterviewRail } from "@/components/InterviewRail";
 import { StudioGrid } from "@/components/StudioGrid";
@@ -9,8 +9,10 @@ import { SocialConnectModal } from "@/components/SocialConnectModal";
 import { useBYOK } from "@/context/BYOKContext";
 import { useVapiCall } from "@/hooks/useVapiCall";
 import { BriefArgs, GeneratedWeek, ChannelStatus } from "@/types";
-import { DEMO_DATA, JOB_PROMPTS, SCHEMAS, TONE_PROMPTS } from "@/constants/prompts";
+import { DEMO_DATA, JOB_PROMPTS, SCHEMAS, TONE_PROMPTS, SYSTEM_PROMPT } from "@/constants/prompts";
 import { gemJSON, gemImage, argsFromTranscript } from "@/lib/geminiEngine";
+
+const ALL_CHANNELS = ["li", "x", "car", "short", "ads", "news", "cal"] as const;
 
 export default function Home() {
   const { config, hasGeminiKey } = useBYOK();
@@ -19,36 +21,68 @@ export default function Home() {
   const [generatedContent, setGeneratedContent] = useState<GeneratedWeek>({});
   const [channelStatus, setChannelStatus] = useState<Record<string, ChannelStatus>>({});
   const [isBuilding, setIsBuilding] = useState(false);
+  const [lastBrief, setLastBrief] = useState<BriefArgs | null>(null);
+  const demoTimersRef = useRef<NodeJS.Timeout[]>([]);
 
   // Parallel generation orchestrator
   const buildWeekContent = useCallback(
     async (brief: BriefArgs, source: string) => {
+      setLastBrief(brief);
       setIsBuilding(true);
 
-      // In DEMO mode or if no Gemini key is provided, load the realistic pre-computed demo set
+      // Clear any pending demo timers
+      demoTimersRef.current.forEach((t) => clearTimeout(t));
+      demoTimersRef.current = [];
+
+      // Reset content & set initial writing status for all channels
+      setGeneratedContent({});
+      const initialStatus: Record<string, ChannelStatus> = {};
+      ALL_CHANNELS.forEach((ch) => {
+        initialStatus[ch] = { writing: true, generatingImages: false, done: false };
+      });
+      setChannelStatus(initialStatus);
+
+      // In DEMO mode or if no Gemini key is provided, simulate realistic parallel progressive completion
       if (!hasGeminiKey) {
-        setTimeout(() => {
-          setGeneratedContent(DEMO_DATA.out);
-          setIsBuilding(false);
-        }, 1200);
+        const demoSchedule: { ch: keyof GeneratedWeek; delay: number }[] = [
+          { ch: "li", delay: 400 },
+          { ch: "x", delay: 750 },
+          { ch: "car", delay: 1100 },
+          { ch: "short", delay: 1450 },
+          { ch: "ads", delay: 1750 },
+          { ch: "news", delay: 2000 },
+          { ch: "cal", delay: 2250 }
+        ];
+
+        demoSchedule.forEach(({ ch, delay }, index) => {
+          const timer = setTimeout(() => {
+            const assetData = (DEMO_DATA.out as any)[ch];
+            if (assetData) {
+              setGeneratedContent((prev) => ({ ...prev, [ch]: assetData }));
+              setChannelStatus((prev) => ({
+                ...prev,
+                [ch]: { writing: false, generatingImages: false, done: true }
+              }));
+            }
+
+            if (index === demoSchedule.length - 1) {
+              setIsBuilding(false);
+            }
+          }, delay);
+
+          demoTimersRef.current.push(timer);
+        });
+
         return;
       }
 
-      const channels = ["li", "x", "car", "short", "story", "ads", "news", "cal"] as const;
+      // Live Gemini Mode: Concurrent parallel API workers
       const toneInstruction = TONE_PROMPTS[config.preferredTone] || TONE_PROMPTS.founder;
 
-      // Reset content
-      setGeneratedContent({});
-
       await Promise.all(
-        channels.map(async (ch) => {
-          setChannelStatus((prev) => ({
-            ...prev,
-            [ch]: { writing: true, generatingImages: false, done: false }
-          }));
-
+        ALL_CHANNELS.map(async (ch) => {
           try {
-            const systemPrompt = `You are the ${ch} writer in a content team for an Indian creator. Write ONLY from the interview and brief: keep their story, their numbers and their exact quotes; never invent facts, names, stats or results they did not say. India context. No emoji. No em dashes. ${toneInstruction}\n\nYour job: ${JOB_PROMPTS[ch]}`;
+            const systemPrompt = `${SYSTEM_PROMPT}\n\n${toneInstruction}\n\nYour job for ${ch.toUpperCase()}:\n${JOB_PROMPTS[ch]}`;
 
             const userPrompt = `Brief (JSON):\n${JSON.stringify(
               brief,
@@ -67,10 +101,14 @@ export default function Home() {
             setGeneratedContent((prev) => ({ ...prev, [ch]: result }));
             setChannelStatus((prev) => ({
               ...prev,
-              [ch]: { writing: false, generatingImages: true, done: true }
+              [ch]: {
+                writing: false,
+                generatingImages: ch === "li" && Boolean(result.image_prompt),
+                done: true
+              }
             }));
 
-            // Optional background image generation
+            // Optional background image generation for LinkedIn
             if (ch === "li" && result.image_prompt) {
               gemImage(config.geminiApiKey, config.imageModel, result.image_prompt, "16:9")
                 .then((url) => {
@@ -78,14 +116,24 @@ export default function Home() {
                     ...prev,
                     li: { ...prev.li!, imageUrl: url }
                   }));
+                  setChannelStatus((prev) => ({
+                    ...prev,
+                    li: { ...prev.li!, generatingImages: false }
+                  }));
                 })
-                .catch(console.error);
+                .catch((imgErr) => {
+                  console.error("LinkedIn image generation error:", imgErr);
+                  setChannelStatus((prev) => ({
+                    ...prev,
+                    li: { ...prev.li!, generatingImages: false }
+                  }));
+                });
             }
           } catch (e: any) {
-            console.error(`Error generating ${ch}:`, e);
+            console.error(`Error generating channel ${ch}:`, e);
             setChannelStatus((prev) => ({
               ...prev,
-              [ch]: { writing: false, generatingImages: false, done: false, error: e.message }
+              [ch]: { writing: false, generatingImages: false, done: false, error: e?.message || "Failed to generate" }
             }));
           }
         })
@@ -94,6 +142,61 @@ export default function Home() {
       setIsBuilding(false);
     },
     [config, hasGeminiKey]
+  );
+
+  // Single-channel regenerator
+  const handleRegenerateChannel = useCallback(
+    async (ch: string) => {
+      const briefToUse = lastBrief || DEMO_DATA.args;
+      setChannelStatus((prev) => ({
+        ...prev,
+        [ch]: { writing: true, generatingImages: false, done: false }
+      }));
+
+      if (!hasGeminiKey) {
+        setTimeout(() => {
+          const assetData = (DEMO_DATA.out as any)[ch];
+          if (assetData) {
+            setGeneratedContent((prev) => ({ ...prev, [ch]: assetData }));
+            setChannelStatus((prev) => ({
+              ...prev,
+              [ch]: { writing: false, generatingImages: false, done: true }
+            }));
+          }
+        }, 600);
+        return;
+      }
+
+      try {
+        const toneInstruction = TONE_PROMPTS[config.preferredTone] || TONE_PROMPTS.founder;
+        const systemPrompt = `${SYSTEM_PROMPT}\n\n${toneInstruction}\n\nYour job for ${ch.toUpperCase()}:\n${JOB_PROMPTS[ch]}`;
+        const userPrompt = `Brief (JSON):\n${JSON.stringify(
+          briefToUse,
+          null,
+          2
+        )}\n\nCreator Name: ${config.creatorName}`;
+
+        const result = await gemJSON(
+          config.geminiApiKey,
+          config.textModel,
+          systemPrompt,
+          userPrompt,
+          SCHEMAS[ch]
+        );
+
+        setGeneratedContent((prev) => ({ ...prev, [ch]: result }));
+        setChannelStatus((prev) => ({
+          ...prev,
+          [ch]: { writing: false, generatingImages: false, done: true }
+        }));
+      } catch (e: any) {
+        setChannelStatus((prev) => ({
+          ...prev,
+          [ch]: { writing: false, generatingImages: false, done: false, error: e?.message || "Regeneration failed" }
+        }));
+      }
+    },
+    [config, hasGeminiKey, lastBrief]
   );
 
   const {
@@ -121,8 +224,8 @@ export default function Home() {
 
   const handleBuildFromTyped = async (typedText: string) => {
     if (!hasGeminiKey) {
-      // In demo/free mode
-      setGeneratedContent(DEMO_DATA.out);
+      // In demo/free mode: use demo brief & kick off realistic parallel build
+      await buildWeekContent(DEMO_DATA.args, "Typed input (Demo)");
       return;
     }
 
@@ -138,6 +241,16 @@ export default function Home() {
       alert("Failed to extract brief from input: " + e.message);
       setIsBuilding(false);
     }
+  };
+
+  const handleResetAll = () => {
+    demoTimersRef.current.forEach((t) => clearTimeout(t));
+    demoTimersRef.current = [];
+    reset();
+    setGeneratedContent({});
+    setChannelStatus({});
+    setIsBuilding(false);
+    setLastBrief(null);
   };
 
   return (
@@ -162,17 +275,22 @@ export default function Home() {
           volumeLevel={volumeLevel}
           speaker={speaker}
           transcript={transcript}
-          brief={brief}
+          brief={brief || lastBrief}
           onStartLive={handleStartLive}
           onPlayDemo={playDemo}
           onStopCall={stopCall}
-          onReset={reset}
+          onReset={handleResetAll}
           onBuildFromTyped={handleBuildFromTyped}
           isBuilding={isBuilding}
         />
 
-        {/* Right Studio Grid: 6 Platform Previews */}
-        <StudioGrid content={generatedContent} status={channelStatus} />
+        {/* Right Studio Grid: Multi-Platform Previews */}
+        <StudioGrid
+          content={generatedContent}
+          status={channelStatus}
+          isBuilding={isBuilding}
+          onRegenerateChannel={handleRegenerateChannel}
+        />
       </main>
 
       {/* Modals */}
