@@ -11,7 +11,8 @@ import {
   Send,
   Lightbulb,
   MessageSquare,
-  Sparkles
+  Sparkles,
+  FastForward
 } from "lucide-react";
 
 interface InterviewRailProps {
@@ -24,6 +25,7 @@ interface InterviewRailProps {
   brief: BriefArgs | null;
   onStartLive: () => void;
   onPlayDemo: () => void;
+  onSkipDemo?: () => void;
   onStopCall: () => void;
   onReset: () => void;
   onBuildFromTyped: (typedText: string) => void;
@@ -46,6 +48,7 @@ export function InterviewRail({
   brief,
   onStartLive,
   onPlayDemo,
+  onSkipDemo,
   onStopCall,
   onReset,
   onBuildFromTyped,
@@ -79,7 +82,27 @@ export function InterviewRail({
         {mode !== "typed" ? (
           <>
             {/* Primary Action Button */}
-            {!inCall ? (
+            {inCall ? (
+              <div className="flex gap-2">
+                <button
+                  onClick={onStopCall}
+                  className="flex-1 py-3 px-3.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-semibold text-xs shadow-md flex items-center justify-center gap-2 transition-all"
+                >
+                  <PhoneOff className="w-3.5 h-3.5" />
+                  <span>End Interview</span>
+                </button>
+                {mode === "demo" && onSkipDemo && (
+                  <button
+                    onClick={onSkipDemo}
+                    className="py-3 px-3 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200/80 rounded-xl font-semibold text-xs flex items-center justify-center gap-1.5 transition-all"
+                    title="Skip dialogue and generate full week immediately"
+                  >
+                    <FastForward className="w-3.5 h-3.5" />
+                    <span>Skip to Results</span>
+                  </button>
+                )}
+              </div>
+            ) : (
               <button
                 onClick={mode === "live" ? onStartLive : onPlayDemo}
                 className="w-full py-3.5 px-4 bg-gradient-to-r from-rose-500 to-rose-600 hover:from-rose-600 hover:to-rose-700 text-white rounded-xl font-semibold text-sm shadow-md shadow-rose-500/20 flex items-center justify-center gap-2.5 transition-all transform active:scale-[0.99]"
@@ -95,14 +118,6 @@ export function InterviewRail({
                     <span>Play Demo Call</span>
                   </>
                 )}
-              </button>
-            ) : (
-              <button
-                onClick={onStopCall}
-                className="w-full py-3.5 px-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-semibold text-sm shadow-md flex items-center justify-center gap-2.5 transition-all"
-              >
-                <PhoneOff className="w-4 h-4" />
-                <span>End Interview</span>
               </button>
             )}
 

@@ -263,7 +263,8 @@ export const DEMO_DATA = {
       body: "He was not rejecting technology.\n\nHe was rejecting the friction of dashboards, logins, and dropdown menus when 10 customers are shouting orders across the counter.\n\nHere is the ground reality of small business in India:\n→ 33% of inbound phone calls are dropped during peak rush hours.\n→ Every dropped call is an order that walks straight to the shop next door.\n→ Dashboards do not take orders. Workers do.\n\nBharat will not adopt SaaS.\nBharat will hire AI employees that speak Hindi and just work.\n\nIf you run a business, would you rather manage software or hire an AI coworker who never misses a call?",
       hashtags: ["BharatCommerce", "ArtificialIntelligence", "SmallBusiness"],
       best_time: "Tuesday, 8:15 AM IST",
-      image_prompt: "A traditional Indian mithai sweet shop counter in Indore, warm brass trays, morning sunlight streaming through the doorway, authentic documentary scene, no text."
+      image_prompt: "A traditional Indian mithai sweet shop counter in Indore, warm brass trays, morning sunlight streaming through the doorway, authentic documentary scene, no text.",
+      imageUrl: "/demo/linkedin-hero.jpg"
     },
     x: {
       posts: [
@@ -274,37 +275,44 @@ export const DEMO_DATA = {
         "The next multi-billion-dollar wave in emerging markets will not be 'SaaS for SMBs'.\n\nIt will be autonomous digital coworkers executing real frontline tasks quietly in the background.",
         "Bharat will skip the software era entirely and go straight to AI employees that just work.\n\nIf this resonated:\n1. Follow for more breakdowns on AI in the real economy.\n2. Repost tweet 1 to share with other builders."
       ],
-      image_prompt: "Busy market street in an Indian city with bustling shops, photorealistic documentary style, warm sunrise lighting, authentic street commerce, no text."
+      image_prompt: "Busy market street in an Indian city with bustling shops, photorealistic documentary style, warm sunrise lighting, authentic street commerce, no text.",
+      imageUrl: "/demo/twitter-hero.jpg"
     },
     car: {
       slides: [
         {
           title: "\"I don't want software. Just answer the phone.\"",
           sub: "Why 60M Indian merchants will skip SaaS and hire AI coworkers",
-          image_prompt: "Warm editorial documentary photography of an authentic Indian sweet shop merchant behind a wooden counter, soft morning daylight, muted clay and brass tones, vertical 4:5 composition, calm negative space in lower half, no text."
+          image_prompt: "Warm editorial documentary photography of an authentic Indian sweet shop merchant behind a wooden counter, soft morning daylight, muted clay and brass tones, vertical 4:5 composition, calm negative space in lower half, no text.",
+          imageUrl: "/demo/carousel-cover.jpg"
         },
         {
           title: "The SaaS Dashboard Trap",
           sub: "Founders build complex portals for merchants who run purely on voice and speed",
-          image_prompt: "Warm editorial documentary photography of an old wooden ledger desk with a ringing smartphone, soft morning daylight, muted clay and brass tones, vertical 4:5 composition, calm negative space in lower half, no text."
+          image_prompt: "Warm editorial documentary photography of an old wooden ledger desk with a ringing smartphone, soft morning daylight, muted clay and brass tones, vertical 4:5 composition, calm negative space in lower half, no text.",
+          imageUrl: "/demo/carousel-slide-2.jpg"
         },
         {
           title: "The 33% Leaking Bucket",
           sub: "1 in 3 customer calls go unanswered during rush hours. Swipe for the shift →",
-          image_prompt: "Warm editorial documentary photography of bustling Indore bazaar commerce in morning mist, muted clay and brass tones, vertical 4:5 composition, calm negative space in lower half, no text."
+          image_prompt: "Warm editorial documentary photography of bustling Indore bazaar commerce in morning mist, muted clay and brass tones, vertical 4:5 composition, calm negative space in lower half, no text.",
+          imageUrl: "/demo/carousel-slide-3.jpg"
         },
         {
           title: "The Voice-First AI Worker",
           sub: "Zero logins. Answers in Hindi. Pushes orders directly to WhatsApp. Swipe for checklist →",
-          image_prompt: "Warm editorial documentary photography of a modern Indian smartphone resting on brass display tray, muted clay and brass tones, vertical 4:5 composition, calm negative space in lower half, no text."
+          image_prompt: "Warm editorial documentary photography of a modern Indian smartphone resting on brass display tray, muted clay and brass tones, vertical 4:5 composition, calm negative space in lower half, no text.",
+          imageUrl: "/demo/carousel-slide-4.jpg"
         },
         {
           title: "The 3-Step AI Transition",
           sub: "Audit missed calls → Deploy voice agent → Automate WhatsApp. Save this checklist!",
-          image_prompt: "Warm editorial documentary photography of an Indian shopkeeper smiling warmly at a customer, soft morning daylight, muted clay and brass tones, vertical 4:5 composition, calm negative space in lower half, no text."
+          image_prompt: "Warm editorial documentary photography of an Indian shopkeeper smiling warmly at a customer, soft morning daylight, muted clay and brass tones, vertical 4:5 composition, calm negative space in lower half, no text.",
+          imageUrl: "/demo/carousel-slide-5.jpg"
         }
       ],
       cover_art_prompt: "Warm editorial documentary photography of an authentic Indian sweet shop merchant behind a wooden counter, soft morning daylight, muted clay and brass tones, vertical 4:5 composition, calm negative space in lower half, no text.",
+      coverImageUrl: "/demo/carousel-cover.jpg",
       caption: "Why Bharat will skip SaaS and hire AI voice workers directly. A 10-second lesson from an Indore sweet shop owner. Save this breakdown for later. #BharatTech #AIWorkers #SmallBusiness"
     },
     short: {
@@ -314,52 +322,61 @@ export const DEMO_DATA = {
           time: "0-3s",
           visual: "Rapid camera push-in on an Indore sweet shop counter with phones ringing uncontrollably",
           vo: "Every software company in India is building for the wrong 99% of businesses.",
-          frame_prompt: "Cinematic vertical 9:16 keyframe of a traditional Indian sweet shop glass counter, warm morning lighting, documentary style, no text."
+          frame_prompt: "Cinematic vertical 9:16 keyframe of a traditional Indian sweet shop glass counter, warm morning lighting, documentary style, no text.",
+          imageUrl: "/demo/shorts-thumb.jpg"
         },
         {
           time: "4-12s",
           visual: "Busy merchant hand-rolling fresh sweets while ignoring a ringing smartphone on his wooden desk",
           vo: "I tried selling software to a sweet shop owner in Indore. He closed my laptop and said: I don't want software. I want someone who answers the phone.",
-          frame_prompt: "Cinematic vertical 9:16 keyframe of busy Indian shopkeeper rolling sweets while smartphone screen glows on table, warm morning lighting, documentary style, no text."
+          frame_prompt: "Cinematic vertical 9:16 keyframe of busy Indian shopkeeper rolling sweets while smartphone screen glows on table, warm morning lighting, documentary style, no text.",
+          imageUrl: "/demo/carousel-slide-2.jpg"
         },
         {
           time: "13-22s",
           visual: "Pacing quickens as red graphic highlight shows 33% missed call rate over shop cash ledger",
           vo: "Here is why: Indian shops miss 33% of their customer calls during rush hours. That's a third of their daily revenue gone.",
-          frame_prompt: "Cinematic vertical 9:16 keyframe of merchant cash drawer, Indian rupee notes, and smartphone, soft focus, warm morning lighting, documentary style, no text."
+          frame_prompt: "Cinematic vertical 9:16 keyframe of merchant cash drawer, Indian rupee notes, and smartphone, soft focus, warm morning lighting, documentary style, no text.",
+          imageUrl: "/demo/ad-stat.jpg"
         },
         {
           time: "23-35s",
           visual: "Smooth transition showing AI voice agent answering on speakerphone in fluent Hindi while merchant smiles",
           vo: "They don't have time to stare at dashboards. But an AI employee that speaks Hindi and confirms orders on WhatsApp? It just works.",
-          frame_prompt: "Cinematic vertical 9:16 keyframe of smiling shopkeeper listening to speakerphone on wooden counter, warm morning lighting, documentary style, no text."
+          frame_prompt: "Cinematic vertical 9:16 keyframe of smiling shopkeeper listening to speakerphone on wooden counter, warm morning lighting, documentary style, no text.",
+          imageUrl: "/demo/carousel-slide-4.jpg"
         },
         {
           time: "36-45s",
           visual: "Merchant happily handing a packed mithai box to customer, camera pans up back to the bustling storefront",
           vo: "Bharat is skipping software completely to hire AI workers... and that's the exact reason why...",
-          frame_prompt: "Cinematic vertical 9:16 keyframe of Indian sweet shop storefront at golden hour with customers, warm morning lighting, documentary style, no text."
+          frame_prompt: "Cinematic vertical 9:16 keyframe of Indian sweet shop storefront at golden hour with customers, warm morning lighting, documentary style, no text.",
+          imageUrl: "/demo/carousel-slide-5.jpg"
         }
       ],
       thumbnail_text: "NO MORE SAAS",
-      thumbnail_prompt: "Dramatic cinematic vertical 9:16 portrait of an Indian merchant with intense expressive focus, atmospheric morning side-lighting, clean empty top third for bold typography, no text."
+      thumbnail_prompt: "Dramatic cinematic vertical 9:16 portrait of an Indian merchant with intense expressive focus, atmospheric morning side-lighting, clean empty top third for bold typography, no text.",
+      thumbnailUrl: "/demo/shorts-thumb.jpg"
     },
     story: {
       frames: [
         {
           text: "\"I don't want software. Just answer the phone.\"",
           sticker: "Do you agree? (100% Yes / SaaS is fine)",
-          image_prompt: "Vertical 9:16 background of warm wooden desk with Indian ledger and brass pen, soft morning lighting, calm center area, no text."
+          image_prompt: "Vertical 9:16 background of warm wooden desk with Indian ledger and brass pen, soft morning lighting, calm center area, no text.",
+          imageUrl: "/demo/story-bg.jpg"
         },
         {
           text: "Small shops miss 33% of customer calls during rush hour. That is 1/3rd revenue lost.",
           sticker: "Did you know this? (Shocking / Expected)",
-          image_prompt: "Vertical 9:16 background of bustling Indore market street with blurred morning motion, warm cinematic tones, calm center area, no text."
+          image_prompt: "Vertical 9:16 background of bustling Indore market street with blurred morning motion, warm cinematic tones, calm center area, no text.",
+          imageUrl: "/demo/twitter-hero.jpg"
         },
         {
           text: "We built an AI voice worker that answers in Hindi and takes orders in 3 seconds.",
           sticker: "DM 'VOICE' for demo",
-          image_prompt: "Vertical 9:16 clean minimalist background with subtle Indian handcrafted textures, warm beige and ivory, calm center area, no text."
+          image_prompt: "Vertical 9:16 clean minimalist background with subtle Indian handcrafted textures, warm beige and ivory, calm center area, no text.",
+          imageUrl: "/demo/carousel-cover.jpg"
         }
       ]
     },
@@ -369,19 +386,22 @@ export const DEMO_DATA = {
           kind: "quote",
           headline: "\"I don't want software. I want someone who answers.\"",
           sub: "What an Indore sweet shop owner taught us about the real Bharat economy.",
-          image_prompt: "Square 1:1 minimalist photograph of an authentic Indian brass bell on wooden counter, morning light, calm space for text, no text."
+          image_prompt: "Square 1:1 minimalist photograph of an authentic Indian brass bell on wooden counter, morning light, calm space for text, no text.",
+          imageUrl: "/demo/ad-quote.jpg"
         },
         {
           kind: "stat",
           headline: "33% OF CALLS LOST DAILY",
           sub: "Stop losing peak hour orders. Zero missed calls with 24/7 AI voice response.",
-          image_prompt: "Square 1:1 high contrast shot of old Indian telephone receiver and modern smartphone side by side, clean dark backdrop, no text."
+          image_prompt: "Square 1:1 high contrast shot of old Indian telephone receiver and modern smartphone side by side, clean dark backdrop, no text.",
+          imageUrl: "/demo/ad-stat.jpg"
         },
         {
           kind: "offer",
           headline: "HIRE YOUR FIRST AI WORKER",
           sub: "Setup in 3 minutes. Zero tech skills. Speaks fluent Hindi & English.",
-          image_prompt: "Square 1:1 clean modern shot of a confident Indian founder in casual jacket, warm natural lighting, spacious negative space, no text."
+          image_prompt: "Square 1:1 clean modern shot of a confident Indian founder in casual jacket, warm natural lighting, spacious negative space, no text.",
+          imageUrl: "/demo/ad-offer.jpg"
         }
       ]
     },
@@ -391,7 +411,9 @@ export const DEMO_DATA = {
       title: "Why 60 Million Indian Merchants Will Skip Software Entirely",
       body: "Last week, I sat down with a sweet shop owner in Indore to demo our new management software. Two minutes into the presentation, he gently reached across the counter and closed my laptop.\n\n\"Beta,\" he told me, \"I don't want software. I want someone who answers the phone when ten customers are shouting orders across the counter.\"\n\nIn that single ten-second sentence, he exposed what the tech industry keeps getting wrong about Bharat. Small business owners do not have the time or patience to become dashboard operators. They have one urgent, acute leak: 33% of inbound customer calls go unanswered during rush hours. In Indian retail, a dropped call isn't an inconvenience—it's cash walking straight to the shop next door.\n\nThe next breakthrough in emerging markets won't come from another SaaS subscription. It will come from autonomous AI employees that speak local dialects, answer calls instantly, and do the job quietly in the background.",
       cta: "Read The Full Playbook",
-      hero_prompt: "Panoramic 16:9 editorial banner of an artisan Indian sweet kitchen with warm copper pots and natural morning window light, no text."
+      hero_prompt: "Panoramic 16:9 editorial banner of an artisan Indian sweet kitchen with warm copper pots and natural morning window light, no text.",
+      heroImageUrl: "/demo/newsletter-hero.jpg",
+      imageUrl: "/demo/newsletter-hero.jpg"
     },
     cal: {
       days: [

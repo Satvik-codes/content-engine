@@ -586,7 +586,12 @@ export function StudioGrid({
                 )}
               </div>
             ) : content.x ? (
-              <div className="space-y-2.5 max-h-[260px] overflow-y-auto pr-1 text-xs">
+              <div className="space-y-2.5 max-h-[290px] overflow-y-auto pr-1 text-xs">
+                {content.x.imageUrl && (
+                  <div className="rounded-xl overflow-hidden border border-slate-200 mb-2 shadow-2xs">
+                    <img src={content.x.imageUrl} alt="Twitter Header" className="w-full h-28 object-cover" />
+                  </div>
+                )}
                 {content.x.posts.map((post, idx) => (
                   <div key={idx} className="p-3 bg-slate-50 border border-slate-100 rounded-xl relative group">
                     <span className="text-[10px] font-mono text-slate-400 absolute top-2 right-2.5">
@@ -733,11 +738,14 @@ export function StudioGrid({
                     <div className="space-y-2.5">
                       <div className="relative aspect-4/5 rounded-xl bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-white p-5 flex flex-col justify-between overflow-hidden shadow-inner border border-slate-800">
                         {content.car.slides[activeCarouselSlide].imageUrl && (
-                          <img
-                            src={content.car.slides[activeCarouselSlide].imageUrl}
-                            alt="Slide Background"
-                            className="absolute inset-0 w-full h-full object-cover opacity-35 mix-blend-overlay"
-                          />
+                          <>
+                            <img
+                              src={content.car.slides[activeCarouselSlide].imageUrl}
+                              alt="Slide Background"
+                              className="absolute inset-0 w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-slate-950/50" />
+                          </>
                         )}
 
                         {/* Slide Top Bar with Slide Indicators */}
@@ -835,20 +843,27 @@ export function StudioGrid({
                           setActiveCarouselSlide(idx);
                           setCarouselViewMode("player");
                         }}
-                        className={`p-3 rounded-xl border transition-all cursor-pointer ${
+                        className={`p-2.5 rounded-xl border transition-all cursor-pointer flex items-center gap-3 ${
                           activeCarouselSlide === idx
                             ? "bg-rose-50/70 border-rose-200 shadow-2xs"
                             : "bg-slate-50 border-slate-200 hover:border-slate-300"
                         }`}
                       >
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-[10px] font-mono font-bold text-rose-600">
-                            SLIDE {idx + 1} OF {content.car?.slides.length}
-                          </span>
-                          <span className="text-[10px] text-slate-400">Click to preview</span>
+                        {slide.imageUrl && (
+                          <div className="w-12 h-14 rounded-lg overflow-hidden shrink-0 border border-slate-200 shadow-2xs">
+                            <img src={slide.imageUrl} alt={`Slide ${idx + 1}`} className="w-full h-full object-cover" />
+                          </div>
+                        )}
+                        <div className="truncate flex-1">
+                          <div className="flex items-center justify-between mb-0.5">
+                            <span className="text-[10px] font-mono font-bold text-rose-600">
+                              SLIDE {idx + 1} OF {content.car?.slides.length}
+                            </span>
+                            <span className="text-[10px] text-slate-400">Click to preview</span>
+                          </div>
+                          <h5 className="text-xs font-semibold text-slate-900 truncate leading-snug">{slide.title}</h5>
+                          <p className="text-[11px] text-slate-600 truncate mt-0.5">{slide.sub}</p>
                         </div>
-                        <h5 className="text-xs font-semibold text-slate-900 leading-snug">{slide.title}</h5>
-                        <p className="text-[11px] text-slate-600 mt-0.5">{slide.sub}</p>
                       </div>
                     ))}
                   </div>
@@ -993,6 +1008,26 @@ export function StudioGrid({
                     </span>
                   )}
                 </div>
+
+                {/* Visual Keyframe / Thumbnail Banner */}
+                {(content.short.thumbnailUrl || content.short.scenes[activeShortScene]?.imageUrl) && (
+                  <div className="relative rounded-xl overflow-hidden border border-slate-200 h-28 flex items-center bg-slate-950 shadow-2xs">
+                    <img
+                      src={content.short.scenes[activeShortScene]?.imageUrl || content.short.thumbnailUrl}
+                      alt="Shorts Keyframe"
+                      className="w-full h-full object-cover opacity-85"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" />
+                    <div className="absolute bottom-2 left-2.5 right-2.5 flex items-center justify-between text-white text-[11px]">
+                      <span className="font-bold tracking-tight bg-red-600/90 text-white px-2 py-0.5 rounded text-[10px]">
+                        {content.short.thumbnail_text ? `THUMBNAIL: ${content.short.thumbnail_text}` : "9:16 VERTICAL SHORT"}
+                      </span>
+                      <span className="font-mono text-[10px] text-slate-300">
+                        Scene {activeShortScene + 1} of {content.short.scenes.length}
+                      </span>
+                    </div>
+                  </div>
+                )}
 
                 {/* View 1: Scene breakdown selector */}
                 {shortsViewMode === "scenes" ? (
@@ -1185,13 +1220,29 @@ export function StudioGrid({
                 {content.ads.posters.map((poster, i) => (
                   <div
                     key={i}
-                    className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between text-xs space-y-2 hover:border-slate-300 transition-colors"
+                    className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex flex-col justify-between text-xs space-y-2 hover:border-slate-300 transition-colors shadow-2xs"
                   >
                     <div>
-                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-100">
-                        {poster.kind} Poster
-                      </span>
-                      <h5 className="font-bold text-slate-900 text-sm mt-2 leading-snug">{poster.headline}</h5>
+                      {poster.imageUrl && (
+                        <div className="relative aspect-square w-full rounded-lg overflow-hidden border border-slate-200 mb-2 group shadow-2xs">
+                          <img
+                            src={poster.imageUrl}
+                            alt={`${poster.kind} poster`}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                          <div className="absolute top-2 left-2">
+                            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-white bg-slate-950/80 backdrop-blur-xs px-2 py-0.5 rounded border border-white/20">
+                              {poster.kind} Poster
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                      {!poster.imageUrl && (
+                        <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-100">
+                          {poster.kind} Poster
+                        </span>
+                      )}
+                      <h5 className="font-bold text-slate-900 text-sm mt-1 leading-snug">{poster.headline}</h5>
                       <p className="text-slate-600 text-xs mt-1 leading-relaxed">{poster.sub}</p>
                     </div>
                     <span className="text-[10px] font-mono text-slate-400 truncate" title={poster.image_prompt}>
@@ -1205,6 +1256,19 @@ export function StudioGrid({
             renderCardSkeleton("Newsletter", "Essay", <Mail />, "Drafting 3-paragraph founder deep dive essay...")
           ) : content.news ? (
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-3">
+              {(content.news.heroImageUrl || content.news.imageUrl) && (
+                <div className="rounded-xl overflow-hidden border border-slate-200 h-36 relative shadow-2xs">
+                  <img
+                    src={content.news.heroImageUrl || content.news.imageUrl}
+                    alt="Newsletter Hero Banner"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent" />
+                  <span className="absolute bottom-2.5 left-3 text-[10px] font-mono uppercase tracking-wider text-white/95 bg-slate-950/70 backdrop-blur-xs px-2 py-0.5 rounded border border-white/20">
+                    Artisan Kitchen · Issue Hero
+                  </span>
+                </div>
+              )}
               <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-2.5">
                 <div>
                   <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">Subject Line</span>

@@ -223,28 +223,41 @@ export function useVapiCall(
         if (runId !== demoAbortRef.current) return;
         setTranscript((prev) => [...prev, line]);
         setSpeaker(line.role);
-        setStatusText(line.role === "ai" ? "RIYA SPEAKING" : "YOU ARE SPEAKING");
-        setVolumeLevel(Math.random() * 0.7 + 0.3);
+        setStatusText(line.role === "ai" ? "RIYA SPEAKING" : "CALLER SPEAKING");
+        setVolumeLevel(Math.random() * 0.6 + 0.35);
 
         setTimeout(() => {
           if (runId !== demoAbortRef.current) return;
           setVolumeLevel(0);
-        }, 1200);
+        }, 1100);
 
         if (index === lines.length - 1) {
           setTimeout(() => {
             if (runId !== demoAbortRef.current) return;
             setInCall(false);
-            setStatusText("INTERVIEW ENDED");
+            setStatusText("INTERVIEW COMPLETE");
             setSpeaker(null);
             setBrief(DEMO_DATA.args);
             onToolBuild(DEMO_DATA.args, "Demo interview");
-          }, 1500);
+          }, 1200);
         }
       }, delayAccum);
 
-      delayAccum += 2200 + line.text.length * 35;
+      // Snappy conversational pacing (~1.4s to 2.2s per turn)
+      delayAccum += 1400 + Math.min(line.text.length * 20, 1400);
     });
+  }, [onToolBuild]);
+
+  // Instant skip to results without waiting for dialogue
+  const skipDemoToResults = useCallback(() => {
+    demoAbortRef.current++;
+    setInCall(false);
+    setStatusText("INTERVIEW COMPLETE");
+    setSpeaker(null);
+    setVolumeLevel(0);
+    setTranscript(DEMO_DATA.lines);
+    setBrief(DEMO_DATA.args);
+    onToolBuild(DEMO_DATA.args, "Demo interview (Fast-Forward)");
   }, [onToolBuild]);
 
   const stopCall = useCallback(() => {
@@ -278,6 +291,7 @@ export function useVapiCall(
     speaker,
     startLive,
     playDemo,
+    skipDemoToResults,
     stopCall,
     reset
   };

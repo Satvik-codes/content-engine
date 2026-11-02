@@ -132,6 +132,7 @@ export interface NewsletterAsset {
   cta: string;
   hero_prompt: string;
   heroImageUrl?: string;
+  imageUrl?: string;
 }
 
 // 8. Posting Calendar
